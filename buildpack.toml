@@ -1,0 +1,22 @@
+api = "0.7"
+
+[buildpack]
+  id = "static-buildpack"
+  name = "Static Buildpack"
+  version = "__replace__"
+  homepage = "https://www.runway.horse/docs/"
+  description = "A buildpack for Hugo & mdbook (for Runway)"
+
+  [[buildpack.licenses]]
+    type = "BSD-2-Clause"
+    uri = "https://github.com/hostwithquantum/static-buildpack/blob/main/LICENSE"
+
+[metadata]
+  include-files = ["bin/build", "bin/detect", "buildpack.toml"]
+  pre-package = "make build"
+
+[[order]]
+  [[order.group]]
+    id = "paketo-buildpacks/web-servers"
+    version = "1.4.1"
+    optional = false
