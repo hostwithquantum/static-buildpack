@@ -25,12 +25,15 @@ func Detect(logs scribe.Emitter) packit.DetectFunc {
 			Plan: packit.BuildPlan{
 				Provides: []packit.BuildPlanProvision{
 					{
-						Name: string(finder.GetStaticType()),
+						Name: "static-buildpack",
 					},
 				},
 				Requires: []packit.BuildPlanRequirement{
 					{
-						Name: (string(finder.GetStaticType())),
+						Name: "static-buildpack",
+						Metadata: map[string]any{
+							"static-type": string(finder.GetStaticType()),
+						},
 					},
 				},
 

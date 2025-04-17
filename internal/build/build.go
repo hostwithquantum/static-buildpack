@@ -37,15 +37,30 @@ func Build(log scribe.Emitter) packit.BuildFunc {
 	return func(ctx packit.BuildContext) (packit.BuildResult, error) {
 		log.Title("%s %s", ctx.BuildpackInfo.Name, ctx.BuildpackInfo.Version)
 
+		var plan packit.BuildpackPlanEntry
+		for _, p := range ctx.Plan.Entries {
+			if p.Name != "static-buildpack" {
+				continue
+			}
+
+			plan = p
+			break
+		}
+
+		rawType, ok := plan.Metadata["static-type"].(string)
+		if !ok {
+			return packit.BuildResult{}, fmt.Errorf("static-type is not set")
+		}
+
 		// Get static type from build plan
 		var staticType StaticType
-		switch ctx.Plan.Entries[0].Name {
+		switch rawType {
 		case string(HugoType):
 			staticType = HugoType
 		case string(MdBookType):
 			staticType = MdBookType
 		default:
-			return packit.BuildResult{}, fmt.Errorf("unsupported static type: %s", ctx.Plan.Entries[0].Name)
+			return packit.BuildResult{}, fmt.Errorf("unsupported meta data: %v", plan.Metadata)
 		}
 
 		// Get working directory
