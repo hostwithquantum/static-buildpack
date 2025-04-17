@@ -1,7 +1,6 @@
 package detect
 
 import (
-	"github.com/hostwithquantum/static-buildpack/internal/meta"
 	"github.com/paketo-buildpacks/packit/v2"
 	"github.com/paketo-buildpacks/packit/v2/scribe"
 )
@@ -19,36 +18,40 @@ func Detect(logs scribe.Emitter) packit.DetectFunc {
 
 		logs.Subprocess("Static site configuration found: %s", finder.GetStaticType())
 
-		staticType := finder.GetStaticType()
-
-		webServer := meta.DetectWebServer()
-		publicDir := meta.DetectHtDocs()
+		// webServer := meta.DetectWebServer()
+		// publicDir := meta.DetectHtDocs()
 
 		return packit.DetectResult{
 			Plan: packit.BuildPlan{
 				Provides: []packit.BuildPlanProvision{
 					{
-						Name: string(staticType),
+						Name: string(finder.GetStaticType()),
 					},
 				},
 				Requires: []packit.BuildPlanRequirement{
 					{
-						Name: ctx.Info.Name,
-						Metadata: map[string]any{
-							"type":  string(staticType),
-							"build": true,
-						},
-					},
-					{
-						Name: "paketo-buildpacks/" + webServer,
-						Metadata: map[string]any{
-							"launch": true,
-							"env": map[string]string{
-								"BP_WEB_SERVER_ROOT": publicDir,
-							},
-						},
+						Name: (string(finder.GetStaticType())),
 					},
 				},
+
+				// Provides: []packit.BuildPlanProvision{
+				// 	{
+				// 		Name: "static-" + string(finder.GetStaticType()),
+				// 	},
+				// },
+				// Requires: []packit.BuildPlanRequirement{
+				// 	{
+				// 		Name: "paketo-buildpacks/" + webServer,
+				// 	},
+				// },
+				// Requires: []packit.BuildPlanRequirement{
+				// 	{
+				// 		Name: fmt.Sprintf("%s@%s", ctx.Info.ID, ctx.Info.Version),
+				// 		Metadata: map[string]any{
+				// 			"type": string(finder.GetStaticType()),
+				// 		},
+				// 	},
+				// },
 			},
 		}, nil
 	}

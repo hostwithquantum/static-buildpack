@@ -39,7 +39,7 @@ func Build(log scribe.Emitter) packit.BuildFunc {
 
 		// Get static type from build plan
 		var staticType StaticType
-		switch ctx.Plan.Entries[0].Metadata["type"].(string) {
+		switch ctx.Plan.Entries[0].Name {
 		case string(HugoType):
 			staticType = HugoType
 		case string(MdBookType):
