@@ -1,8 +1,7 @@
 package detect
 
 import (
-	"os"
-
+	"github.com/hostwithquantum/static-buildpack/internal/meta"
 	"github.com/paketo-buildpacks/packit/v2"
 	"github.com/paketo-buildpacks/packit/v2/scribe"
 )
@@ -22,17 +21,8 @@ func Detect(logs scribe.Emitter) packit.DetectFunc {
 
 		staticType := finder.GetStaticType()
 
-		// Determine which web server to use
-		webServer := os.Getenv("BP_WEB_SERVER")
-		if webServer == "" {
-			webServer = "nginx" // Default to nginx
-		}
-
-		// determine the public dir
-		var publicDir = "htdocs"
-		if os.Getenv("BP_WEB_SERVER_ROOT") != "" {
-			publicDir = os.Getenv("BP_WEB_SERVER_ROOT")
-		}
+		webServer := meta.DetectWebServer()
+		publicDir := meta.DetectHtDocs()
 
 		return packit.DetectResult{
 			Plan: packit.BuildPlan{
@@ -43,17 +33,17 @@ func Detect(logs scribe.Emitter) packit.DetectFunc {
 				},
 				Requires: []packit.BuildPlanRequirement{
 					{
-						Name: string(staticType),
+						Name: ctx.Info.Name,
 						Metadata: map[string]any{
+							"type":  string(staticType),
 							"build": true,
 						},
 					},
 					{
-						Name: "paketo-buildpacks/web-servers",
+						Name: "paketo-buildpacks/" + webServer,
 						Metadata: map[string]any{
 							"launch": true,
 							"env": map[string]string{
-								"BP_WEB_SERVER":      "nginx",
 								"BP_WEB_SERVER_ROOT": publicDir,
 							},
 						},

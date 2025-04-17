@@ -1,10 +1,11 @@
 api = "0.7"
 
 [buildpack]
-  id = "horse.runway.buildpacks.static"
+  id = "static-buildpack"
   name = "Static Buildpack"
-  version = "__replace__"
+  version = "dev"
   homepage = "https://www.runway.horse/docs/"
+  keywords = ["hugo", "mdbook"]
   description = "A buildpack for Hugo & mdbook (for Runway)"
 
   [[buildpack.licenses]]
@@ -13,10 +14,13 @@ api = "0.7"
 
 [metadata]
   include-files = ["bin/build", "bin/detect", "buildpack.toml"]
-  pre-package = "make build"
+  pre-package = "make package"
 
 [[order]]
   [[order.group]]
-    id = "paketo-buildpacks/web-servers"
-    version = "1.4.1"
-    optional = false
+    id = "paketo-buildpacks/nginx"
+    version = "0.17.24"
+
+  [[order.group]]
+    id = "paketo-buildpacks/httpd"
+    version = "0.7.48"

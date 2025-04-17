@@ -5,6 +5,7 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/hostwithquantum/static-buildpack/internal/meta"
 	"github.com/paketo-buildpacks/packit/v2"
 	"github.com/paketo-buildpacks/packit/v2/pexec"
 	"github.com/paketo-buildpacks/packit/v2/scribe"
@@ -38,7 +39,7 @@ func Build(log scribe.Emitter) packit.BuildFunc {
 
 		// Get static type from build plan
 		var staticType StaticType
-		switch ctx.Plan.Entries[0].Name {
+		switch ctx.Plan.Entries[0].Metadata["type"].(string) {
 		case string(HugoType):
 			staticType = HugoType
 		case string(MdBookType):
@@ -59,14 +60,10 @@ func Build(log scribe.Emitter) packit.BuildFunc {
 			return packit.BuildResult{}, err
 		}
 
-		var publicDir string
-		if os.Getenv("BP_WEB_SERVER_ROOT") != "" {
-			publicDir = os.Getenv("BP_WEB_SERVER_ROOT")
-		} else {
-			publicDir = "htdocs"
-		}
-
-		var args []string
+		var (
+			publicDir = meta.DetectHtDocs()
+			args      []string
+		)
 
 		switch staticType {
 		case HugoType:
@@ -116,21 +113,6 @@ func Build(log scribe.Emitter) packit.BuildFunc {
 			Layers: []packit.Layer{
 				staticLayer,
 			},
-			// Plan: packit.BuildpackPlan{
-			// 	Entries: []packit.BuildpackPlanEntry{
-			// 		{
-			// 			Name: "paketo-buildpacks/web-servers",
-			// 			Metadata: map[string]any{
-			// 				"build":  false,
-			// 				"launch": true,
-			// 				"env": map[string]any{
-			// 					"BP_WEB_SERVER_ROOT": publicDir,
-			// 					"BP_WEB_SERVER":      webServer,
-			// 				},
-			// 			},
-			// 		},
-			// 	},
-			// },
 		}, nil
 	}
 }
