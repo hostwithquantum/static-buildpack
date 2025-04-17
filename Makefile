@@ -1,7 +1,9 @@
 .PHONY: build clean package setup test test-hugo test-mdbook
-builder?=r.planetary-quantum.com/runway-public/runway-buildpack-stack:jammy-full
 
-platform:=linux/amd64
+builder:=paketobuildpacks/builder-jammy-base:latest
+bp:=static-buildpack
+
+pack_cmd:=pack -v
 
 build:
 	GOOS=linux GOARCH=amd64 goreleaser build --single-target --clean --snapshot
@@ -12,34 +14,31 @@ clean:
 	rm -rf dist/
 	rm -f bin/build
 	rm -f bin/detect
-	pack buildpack remove static-buildpack || true
+	pack buildpack remove $(bp) || true
 
 setup:
 	pack config default-builder $(builder)
 	pack config trusted-builders add $(builder)
 
-package: build # DOCKER_DEFAULT_PLATFORM=$(platform)
-	 pack -v \
-	 	buildpack package \
-	 		static-buildpack \
+package: setup build
+	$(info packaging $(bp))
+	$(pack_cmd) buildpack package \
+	 		$(bp) \
 			--config package.toml
 
-test-hugo: setup build
-	pack \
-		build \
+test-hugo:
+	$(pack_cmd) build \
 		test-hugo-app \
 		--builder $(builder) \
-		--platform $(platform) \
 		--path ./tests/hugo-example \
-		--buildpack .
+		--buildpack $(bp)
 
-test-mdbook: setup build
-	pack \
-		build \
+test-mdbook:
+	$(pack_cmd) build \
 		test-mdbook-app \
 		--builder $(builder) \
-		--platform $(platform) \
 		--path ./tests/mdbook-example \
-		--buildpack .
+		-e BP_LOG_LEVEL=debug \
+		--buildpack $(bp)
 
-test: test-hugo test-mdbook
+test: setup test-hugo test-mdbook

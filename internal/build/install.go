@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 
 	"github.com/paketo-buildpacks/packit/v2"
+	"github.com/paketo-buildpacks/packit/v2/scribe"
 )
 
 const (
@@ -13,7 +14,7 @@ const (
 	MdBookLatestVersion = "0.10.2"
 )
 
-func InstallHugo(layer packit.Layer, version string) error {
+func installHugo(log scribe.Emitter, layer packit.Layer, version string) error {
 	if version == "latest" {
 		version = HugoLatestVersion
 	}
@@ -25,15 +26,16 @@ func InstallHugo(layer packit.Layer, version string) error {
 	}
 
 	// Download and install Hugo
-	hugoPath := filepath.Join(binDir, "hugo")
-	if err := downloadAndInstall(getHugoURL(version), hugoPath); err != nil {
+	if err := downloadAndInstall(log, getHugoURL(version), binDir); err != nil {
 		return fmt.Errorf("failed to download Hugo: %w", err)
 	}
+
+	log.Subprocess("Installed hugo")
 
 	return nil
 }
 
-func InstallMdBook(layer packit.Layer, version string) error {
+func installMdBook(log scribe.Emitter, layer packit.Layer, version string) error {
 	if version == "latest" {
 		version = MdBookLatestVersion
 	}
@@ -45,14 +47,11 @@ func InstallMdBook(layer packit.Layer, version string) error {
 	}
 
 	// Download and install mdBook
-	mdbookPath := filepath.Join(binDir, "mdbook")
-	if err := downloadAndInstall(getMdBookURL(version), mdbookPath); err != nil {
+	if err := downloadAndInstall(log, getMdBookURL(version), binDir); err != nil {
 		return fmt.Errorf("failed to download mdBook: %w", err)
 	}
 
-	return nil
-}
+	log.Subprocess("Installed mdbook")
 
-func GetStaticToolPath(layer packit.Layer, tool string) string {
-	return filepath.Join(layer.Path, "bin", tool)
+	return nil
 }

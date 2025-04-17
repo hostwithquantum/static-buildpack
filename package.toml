@@ -2,7 +2,7 @@
 uri = "." 
 
 [[dependencies]]
-  uri = "urn:cnb:registry:paketo-buildpacks/web-servers@1.4.1"
+uri = "urn:cnb:registry:paketo-buildpacks/web-servers@1.4.1"
 
 # Deprecated
 [platform]

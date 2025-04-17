@@ -12,7 +12,6 @@ jobs:
     env:
       DOCKER_REGISTRY: "r.planetary-quantum.com"
       DOCKER_REPO: "buildpacks"
-      BUILDER: "paketobuildpacks/builder-jammy-base:latest"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -33,5 +32,5 @@ jobs:
           version: '~> v2'
           install-only: true
       - run: make build
-      - run: make setup builder=${{ env.BUILDER }}
-      - run: make package builder=${{ env.BUILDER }}
+      - run: make setup
+      - run: make package

@@ -1,7 +1,7 @@
 api = "0.7"
 
 [buildpack]
-  id = "static-buildpack"
+  id = "horse.runway.buildpacks.static"
   name = "Static Buildpack"
   version = "__replace__"
   homepage = "https://www.runway.horse/docs/"
