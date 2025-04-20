@@ -15,14 +15,3 @@ api = "0.7"
 [metadata]
   include-files = ["bin/build", "bin/detect", "buildpack.toml"]
   pre-package = "make package"
-
-# [[order]]
-#   [[order.group]]
-#     id = "paketo-buildpacks/nginx"
-#     version = "0.17.24"
-#     optional = true
-
-#   [[order.group]]
-#     id = "paketo-buildpacks/httpd"
-#     version = "0.7.48"
-#     optional = true

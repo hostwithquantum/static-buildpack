@@ -2,6 +2,9 @@
 uri = "." 
 
 # [[dependencies]]
+#   uri = "urn:cnb:registry:paketo-buildpacks/web-servers@1.4.1"
+
+# [[dependencies]]
 #   uri = "urn:cnb:registry:paketo-buildpacks/httpd@0.7.48"
 
 # [[dependencies]]
