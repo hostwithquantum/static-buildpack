@@ -1,0 +1,12 @@
+[buildpack]
+  uri = "./"
+
+[[dependencies]]
+  uri = "docker://static-buildpack" ### XXX TODO
+
+[[dependencies]]
+  uri = "urn:cnb:registry:paketo-buildpacks/httpd@0.7.48"
+
+[[dependencies]]
+  uri = "urn:cnb:registry:paketo-buildpacks/nginx@0.17.24"
+

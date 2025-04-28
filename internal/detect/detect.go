@@ -1,6 +1,7 @@
 package detect
 
 import (
+	"github.com/hostwithquantum/static-buildpack/internal/meta"
 	"github.com/paketo-buildpacks/packit/v2"
 	"github.com/paketo-buildpacks/packit/v2/scribe"
 )
@@ -19,7 +20,7 @@ func Detect(logs scribe.Emitter) packit.DetectFunc {
 		logs.Detail("Detected static site")
 		logs.Detail("Type: %s", finder.GetStaticType())
 
-		//webServer := meta.DetectWebServer()
+		webServer := meta.DetectWebServer()
 
 		return packit.DetectResult{
 			Plan: packit.BuildPlan{
@@ -35,12 +36,12 @@ func Detect(logs scribe.Emitter) packit.DetectFunc {
 							"static-type": string(finder.GetStaticType()),
 						},
 					},
-					// {
-					// 	Name: webServer,
-					// 	Metadata: map[string]any{
-					// 		"launch": true,
-					// 	},
-					// },
+					{
+						Name: webServer,
+						Metadata: map[string]any{
+							"launch": true,
+						},
+					},
 				},
 			},
 		}, nil

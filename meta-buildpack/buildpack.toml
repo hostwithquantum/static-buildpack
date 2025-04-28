@@ -2,23 +2,25 @@ api = "0.7"
 
 [buildpack]
 id = "meta-buildpack"
-version = "0.1.0"
+version = "0.1.1"
 name = "Hugo + NGINX Stack"
 
 [[order]]
-  [[order.group]]
-    id = "static-buildpack"
-
   [[order.group]]
     id = "paketo-buildpacks/nginx"
     version = "0.17.24"
     optional = true
 
-[[order]]
   [[order.group]]
     id = "static-buildpack"
+    version = "dev" ### XXX TODO
 
+[[order]]
   [[order.group]]
     id = "paketo-buildpacks/httpd"
     version = "0.7.48"
     optional = true
+
+  [[order.group]]
+    id = "static-buildpack"
+    version = "dev" ### XXX TODO
