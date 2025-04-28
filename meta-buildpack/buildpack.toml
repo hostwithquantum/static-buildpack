@@ -12,3 +12,13 @@ name = "Hugo + NGINX Stack"
   [[order.group]]
     id = "paketo-buildpacks/nginx"
     version = "0.17.24"
+    optional = true
+
+[[order]]
+  [[order.group]]
+    id = "static-buildpack"
+
+  [[order.group]]
+    id = "paketo-buildpacks/httpd"
+    version = "0.7.48"
+    optional = true

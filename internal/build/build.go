@@ -124,6 +124,13 @@ func Build(log scribe.Emitter) packit.BuildFunc {
 
 		log.Process("Static site built successfully")
 
+		log.Process("Configuring launch")
+		staticLayer.LaunchEnv = packit.Environment{
+			"BP_WEB_SERVER":      meta.DetectWebServer(),
+			"BP_WEB_SERVER_ROOT": publicDir,
+		}
+		log.EnvironmentVariables(staticLayer)
+
 		return packit.BuildResult{
 			Layers: []packit.Layer{
 				staticLayer,
