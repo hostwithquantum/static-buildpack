@@ -31,7 +31,7 @@ test-hugo:
 		test-hugo-app \
 		--builder $(builder) \
 		--path ./tests/hugo-example \
-		--buildpack $(bp) \
+		-e BP_LOG_LEVEL=DEBUG \
 		--buildpack ./meta-buildpack
 
 test-mdbook:
@@ -39,8 +39,7 @@ test-mdbook:
 		test-mdbook-app \
 		--builder $(builder) \
 		--path ./tests/mdbook-example \
-		-e BP_LOG_LEVEL=debug \
-		--buildpack $(bp)
+		-e BP_LOG_LEVEL=DEBUG \
 		--buildpack ./meta-buildpack
 
 test: setup test-hugo test-mdbook
