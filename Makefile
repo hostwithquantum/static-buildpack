@@ -46,5 +46,6 @@ test-mdbook:
 		-e BP_WEB_SERVER=nginx \
 		-e BP_WEB_SERVER_ROOT=./ \
 		--buildpack ./meta-buildpack
+	# docker run -it --platform linux/amd64 --rm --env PORT=8666 -p 8666:8666 test-mdbook-app
 
 test: setup test-hugo test-mdbook
