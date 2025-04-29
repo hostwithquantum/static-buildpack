@@ -1,9 +1,4 @@
 #!/usr/bin/env bash
 
-if [[ ! -z "$BP_WEB_SERVER" ]]
-then
-  echo "env default: BP_WEB_SERVER is already set (to $BP_WEB_SERVER)"
-  exit 100
-fi
-
+# always successful
 exit 0
