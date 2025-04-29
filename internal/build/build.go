@@ -124,10 +124,14 @@ func Build(log scribe.Emitter) packit.BuildFunc {
 
 		log.Process("Static site built successfully")
 
-		log.Process("Configuring launch")
+		log.Process("Configuring webserver")
+
+		// It's too late to set BP_WEB_SERVER_ROOT (that's a build-time var,
+		// but the nginx build is already done here).
+		//
+		// But the nginx default conf respects "$APP_ROOT" at runtime, so we set that.
 		staticLayer.LaunchEnv = packit.Environment{
-			"BP_WEB_SERVER":      meta.DetectWebServer(),
-			"BP_WEB_SERVER_ROOT": publicDir,
+			"APP_ROOT": publicDir,
 		}
 		log.EnvironmentVariables(staticLayer)
 
