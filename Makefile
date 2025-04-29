@@ -42,5 +42,6 @@ test-mdbook:
 		--path ./tests/mdbook-example \
 		-e BP_LOG_LEVEL=DEBUG \
 		--buildpack ./meta-buildpack
+	# docker run -it --platform linux/amd64 --rm --env PORT=8666 -p 8666:8666 test-mdbook-app
 
 test: setup test-hugo test-mdbook
