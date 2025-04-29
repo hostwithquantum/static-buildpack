@@ -33,6 +33,7 @@ test-hugo:
 		--path ./tests/hugo-example \
 		-e BP_LOG_LEVEL=DEBUG \
 		--buildpack ./meta-buildpack
+	# docker run -it --platform linux/amd64 --rm --env PORT=8666 -p 8666:8666 test-hugo-app
 
 test-mdbook:
 	$(pack_cmd) build \
