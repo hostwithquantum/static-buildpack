@@ -6,6 +6,11 @@ mkdir -p "$CNB_LAYERS_DIR/env/env.build"
 
 echo "env default: BP_WEB_SERVER=nginx"
 printf "nginx" > "$CNB_LAYERS_DIR/env/env.build/BP_WEB_SERVER.default"
+# This is all kinds of stupid. If it's not set, it defaults to "./public",
+# which then gets combined (at launch) to "{{ env 'APP_ROOT' }}/public".
+# But we want to set APP_ROOT to the public dir directly, and not have the /public appended.
+echo "env default: BP_WEB_SERVER_ROOT=./"
+printf './' > "$CNB_LAYERS_DIR/env/env.build/BP_WEB_SERVER_ROOT.default"
 
 cat << EOF > "${CNB_LAYERS_DIR}/env.toml"
 [types]

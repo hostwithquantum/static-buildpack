@@ -13,11 +13,3 @@ func DetectWebServer() string {
 	}
 	return "nginx"
 }
-
-// Detect the public dir
-func DetectHtDocs() string {
-	if os.Getenv("BP_WEB_SERVER_ROOT") != "" {
-		return os.Getenv("BP_WEB_SERVER_ROOT")
-	}
-	return "htdocs"
-}
