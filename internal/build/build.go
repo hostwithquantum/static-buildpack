@@ -5,7 +5,6 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/hostwithquantum/static-buildpack/internal/meta"
 	"github.com/paketo-buildpacks/packit/v2"
 	"github.com/paketo-buildpacks/packit/v2/pexec"
 	"github.com/paketo-buildpacks/packit/v2/scribe"
@@ -76,7 +75,7 @@ func Build(log scribe.Emitter) packit.BuildFunc {
 		}
 
 		var (
-			publicDir = meta.DetectHtDocs()
+			publicDir = "htdocs"
 			args      []string
 		)
 

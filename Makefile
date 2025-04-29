@@ -32,6 +32,8 @@ test-hugo:
 		--builder $(builder) \
 		--path ./tests/hugo-example \
 		-e BP_LOG_LEVEL=DEBUG \
+		-e BP_WEB_SERVER=nginx \
+		-e BP_WEB_SERVER_ROOT=./ \
 		--buildpack ./meta-buildpack
 	# docker run -it --platform linux/amd64 --rm --env PORT=8666 -p 8666:8666 test-hugo-app
 
@@ -41,6 +43,8 @@ test-mdbook:
 		--builder $(builder) \
 		--path ./tests/mdbook-example \
 		-e BP_LOG_LEVEL=DEBUG \
+		-e BP_WEB_SERVER=nginx \
+		-e BP_WEB_SERVER_ROOT=./ \
 		--buildpack ./meta-buildpack
 
 test: setup test-hugo test-mdbook
