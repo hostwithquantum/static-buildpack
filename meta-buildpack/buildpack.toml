@@ -7,20 +7,26 @@ name = "Hugo + NGINX Stack"
 
 [[order]]
   [[order.group]]
+    id = "env-default"
+    version = "1.0.0"
+    optional = true
+
+  [[order.group]]
     id = "paketo-buildpacks/nginx"
     version = "0.17.24"
     optional = true
 
   [[order.group]]
     id = "static-buildpack"
-    version = "dev" ### XXX TODO
+    version = "dev"
 
 [[order]]
+  [[order.group]]
+    id = "env-default"
+    version = "1.0.0"
+    optional = true
+
   [[order.group]]
     id = "paketo-buildpacks/httpd"
     version = "0.7.48"
     optional = true
-
-  [[order.group]]
-    id = "static-buildpack"
-    version = "dev" ### XXX TODO
