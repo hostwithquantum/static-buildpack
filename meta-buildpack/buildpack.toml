@@ -1,0 +1,26 @@
+api = "0.7"
+
+[buildpack]
+id = "meta-buildpack"
+version = "0.1.1"
+name = "Hugo + webserver stack -- here only used for testing"
+
+[[order]]
+  [[order.group]]
+    id = "paketo-buildpacks/nginx"
+    version = "0.17.24"
+    optional = true
+
+  [[order.group]]
+    id = "static-buildpack"
+    version = "dev"
+
+[[order]]
+  [[order.group]]
+    id = "paketo-buildpacks/httpd"
+    version = "0.7.48"
+    optional = true
+
+  [[order.group]]
+    id = "static-buildpack"
+    version = "dev"
