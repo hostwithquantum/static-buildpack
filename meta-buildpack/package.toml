@@ -2,7 +2,7 @@
   uri = "./"
 
 [[dependencies]]
-  uri = "docker://static-buildpack" ### XXX TODO
+  uri = "docker://static-buildpack"
 
 [[dependencies]]
   uri = "urn:cnb:registry:paketo-buildpacks/httpd@0.7.48"
