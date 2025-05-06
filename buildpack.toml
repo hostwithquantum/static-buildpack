@@ -3,7 +3,7 @@ api = "0.7"
 [buildpack]
   id = "static-buildpack"
   name = "Static Buildpack"
-  version = "dev"
+  version = "__replace__"
   homepage = "https://www.runway.horse/docs/"
   keywords = ["hugo", "mdbook"]
   description = "A buildpack for Hugo & mdbook (for Runway)"
