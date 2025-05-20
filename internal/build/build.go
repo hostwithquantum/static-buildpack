@@ -20,8 +20,8 @@ const (
 	MdBookType StaticType = "mdbook"
 
 	// defaults
-	HugoVersion   = "0.146.5"
-	MdBookVersion = "0.4.48"
+	HugoVersion   = "0.147.4"
+	MdBookVersion = "0.4.49"
 )
 
 func Build(log scribe.Emitter) packit.BuildFunc {
