@@ -5,6 +5,7 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/hostwithquantum/static-buildpack/api"
 	"github.com/paketo-buildpacks/packit/v2"
 	"github.com/paketo-buildpacks/packit/v2/pexec"
 	"github.com/paketo-buildpacks/packit/v2/scribe"
@@ -17,15 +18,6 @@ type (
 const (
 	HugoType   StaticType = "hugo"
 	MdBookType StaticType = "mdbook"
-
-	// Path to the hugo or mdbook site
-	StaticPathEnv = "BP_RUNWAY_STATIC_PATH"
-
-	// Hugo version (default: latest)
-	HugoVersionEnv = "BP_RUNWAY_STATIC_HUGO_VERSION"
-
-	// MdBook version (default: latest)
-	MdBookVersionEnv = "BP_RUNWAY_STATIC_MDBOOK_VERSION"
 
 	// defaults
 	HugoVersion   = "0.146.5"
@@ -63,10 +55,7 @@ func Build(log scribe.Emitter) packit.BuildFunc {
 		}
 
 		// Get working directory
-		workingDir := ctx.WorkingDir
-		if path := os.Getenv(StaticPathEnv); path != "" {
-			workingDir = filepath.Join(workingDir, path)
-		}
+		workingDir := api.GetWorkingDir(ctx.WorkingDir)
 
 		// Create layers
 		staticLayer, err := ctx.Layers.Get("static")
@@ -81,7 +70,7 @@ func Build(log scribe.Emitter) packit.BuildFunc {
 
 		switch staticType {
 		case HugoType:
-			version := os.Getenv(HugoVersionEnv)
+			version := os.Getenv(api.HugoVersionEnv)
 			if version == "" {
 				version = HugoVersion
 			}
@@ -90,7 +79,7 @@ func Build(log scribe.Emitter) packit.BuildFunc {
 			}
 			args = append(args, []string{"--source", ".", "--destination", publicDir, "--minify"}...)
 		case MdBookType:
-			version := os.Getenv(MdBookVersionEnv)
+			version := os.Getenv(api.MdBookVersionEnv)
 			if version == "" {
 				version = MdBookVersion
 			}
