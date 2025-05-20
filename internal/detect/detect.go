@@ -1,6 +1,7 @@
 package detect
 
 import (
+	"github.com/hostwithquantum/static-buildpack/api"
 	"github.com/hostwithquantum/static-buildpack/internal/meta"
 	"github.com/paketo-buildpacks/packit/v2"
 	"github.com/paketo-buildpacks/packit/v2/scribe"
@@ -10,10 +11,12 @@ func Detect(logs scribe.Emitter) packit.DetectFunc {
 	return func(ctx packit.DetectContext) (packit.DetectResult, error) {
 		logs.Title("%s %s", ctx.Info.Name, ctx.Info.Version)
 
-		logs.Process("Checking working directory: %s", ctx.WorkingDir)
+		workingDir := api.GetWorkingDir(ctx.WorkingDir)
+
+		logs.Process("Checking working directory: %s", workingDir)
 
 		finder := NewFinder(logs)
-		if err := finder.Find(ctx.WorkingDir); err != nil {
+		if err := finder.Find(workingDir); err != nil {
 			return packit.DetectResult{}, err
 		}
 
