@@ -17,5 +17,5 @@ require (
 	github.com/pelletier/go-toml v1.9.5 // indirect
 	github.com/stretchr/testify v1.10.0
 	github.com/ulikunitz/xz v0.5.12 // indirect
-	golang.org/x/net v0.30.0 // indirect
+	golang.org/x/net v0.38.0 // indirect
 )
