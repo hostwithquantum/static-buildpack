@@ -18,8 +18,8 @@ jobs:
       - uses: actions/setup-go@v5
         with:
           go-version-file: go.mod
-      - uses: buildpacks/github-actions/setup-tools@v5.8.10
-      - uses: buildpacks/github-actions/setup-pack@v5.8.10
+      - uses: buildpacks/github-actions/setup-tools@v5.8.11
+      - uses: buildpacks/github-actions/setup-pack@v5.8.11
       - id: extract-package
         shell: bash
         run: |
