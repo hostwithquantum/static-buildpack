@@ -10,3 +10,11 @@
 [[dependencies]]
   uri = "urn:cnb:registry:paketo-buildpacks/nginx@0.17.36"
 
+[[dependencies]]
+  uri = "urn:cnb:registry:paketo-buildpacks/node-engine@4.1.1"
+
+[[dependencies]]
+  uri = "urn:cnb:registry:paketo-buildpacks/npm-install@2.1.0"
+
+[[dependencies]]
+  uri = "urn:cnb:registry:paketo-buildpacks/node-run-script@2.1.12"

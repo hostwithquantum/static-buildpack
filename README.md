@@ -32,8 +32,18 @@ Some configuration is available, please see [api](./api/) for details.
 
 - `paketo-buildpacks/nginx`
 - `paketo-buildpacks/httpd`
+- `paketo-buildpacks/node-engine`
+- `paketo-buildpacks/npm-install`
+- `paketo-buildpacks/node-run-script`
 
 Either of these can be customized through various environment variables or a full config file for the web server. More details are available [on our documentation](https://www.runway.horse/docs/recipes/webservers/).
+
+### NodeJS
+
+If your static website requires npm (for css/assets), then a `package.json` with a `build` task (`npm run build`) in the root of the repository (or the value of `BP_NODE_RUN_SCRIPTS`) will suffice to include it in the buildplan.
+
+> [!IMPORTANT]
+> Please set `BP_KEEP_FILES` accordingly to keep the generated assets in the container. More details are available on [our documentation](https://www.runway.horse/docs/recipes/javascript/).
 
 ## Usage / License
 

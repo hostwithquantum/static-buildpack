@@ -52,6 +52,7 @@ jobs:
       matrix:
         include:
           - test: test-hugo
+          - test: test-hugo-npm
           - test: test-mdbook
     steps:
       - uses: actions/checkout@v4

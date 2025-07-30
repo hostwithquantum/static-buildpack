@@ -2,3 +2,4 @@
 /dist/
 /tests/hugo-example/public
 /tests/hugo-npm/public
+buildpack.toml.bak
