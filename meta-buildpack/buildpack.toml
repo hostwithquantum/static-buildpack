@@ -7,6 +7,21 @@ name = "Hugo + webserver stack -- here only used for testing"
 
 [[order]]
   [[order.group]]
+    id = "paketo-buildpacks/node-engine"
+    optional = true
+    version = "4.1.11"
+
+  [[order.group]]
+    id = "paketo-buildpacks/npm-install"
+    optional = true
+    version = "2.1.0"
+
+  [[order.group]]
+    id = "paketo-buildpacks/node-run-script"
+    optional = true
+    version = "2.1.12"
+
+  [[order.group]]
     id = "paketo-buildpacks/nginx"
     version = "0.17.36"
     optional = true
@@ -16,6 +31,21 @@ name = "Hugo + webserver stack -- here only used for testing"
     version = "dev"
 
 [[order]]
+  [[order.group]]
+    id = "paketo-buildpacks/node-engine"
+    optional = true
+    version = "4.1.11"
+
+  [[order.group]]
+    id = "paketo-buildpacks/npm-install"
+    optional = true
+    version = "2.1.0"
+
+  [[order.group]]
+    id = "paketo-buildpacks/node-run-script"
+    optional = true
+    version = "2.1.12"
+
   [[order.group]]
     id = "paketo-buildpacks/httpd"
     version = "0.7.60"
