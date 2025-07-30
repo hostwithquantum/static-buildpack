@@ -10,3 +10,5 @@
 [[dependencies]]
   uri = "urn:cnb:registry:paketo-buildpacks/nginx@0.17.36"
 
+[[dependencies]]
+  uri = "urn:cnb:registry:paketo-buildpacks/node-engine@4.1.1"

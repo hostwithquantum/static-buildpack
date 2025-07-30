@@ -1,0 +1,15 @@
+
+{{ define "main" }}
+    <h1 class="text-3xl font-bold underline">{{ .Page.Title }}</h1>
+    <p>
+        {{.Content}}
+        <h2 class="text-2xl font-bold pb-5 pt-5">All Pages</h2>
+        <ul>
+        {{ range .Site.RegularPages }}
+            <li>
+                <a href="{{ .RelPermalink}}" class="link">{{ .LinkTitle }}</a>
+            </li>
+        {{ end }}
+        </ul>
+    </p>
+{{ end }}
