@@ -34,3 +34,33 @@ jobs:
       - run: make build
       - run: make setup
       - run: make package
+      - name: Export buildpack image
+        run: |
+          docker save static-buildpack:latest -o static-buildpack.tar
+      - name: Upload buildpack artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: static-buildpack
+          path: static-buildpack.tar
+          retention-days: 1
+
+  test:
+    needs: build
+    runs-on: ubuntu-latest
+    name: ${{ matrix.test }}
+    strategy:
+      matrix:
+        include:
+          - test: test-hugo
+          - test: test-mdbook
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: static-buildpack
+      - run: docker load -i static-buildpack.tar
+      - run: docker images static-buildpack:latest
+      - uses: buildpacks/github-actions/setup-tools@v5.9.3
+      - uses: buildpacks/github-actions/setup-pack@v5.9.3
+      - run: make setup
+      - run: make ${{ matrix.test }}
