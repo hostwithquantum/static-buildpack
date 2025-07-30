@@ -5,8 +5,8 @@
   uri = "docker://static-buildpack"
 
 [[dependencies]]
-  uri = "urn:cnb:registry:paketo-buildpacks/httpd@0.7.48"
+  uri = "urn:cnb:registry:paketo-buildpacks/httpd@0.7.60"
 
 [[dependencies]]
-  uri = "urn:cnb:registry:paketo-buildpacks/nginx@0.17.24"
+  uri = "urn:cnb:registry:paketo-buildpacks/nginx@0.17.36"
 
