@@ -39,7 +39,7 @@ test-hugo:
 
 test-hugo-npm:
 	$(pack_cmd) build \
-		test-hugo-app \
+		test-hugo-npm-app \
 		--builder $(builder) \
 		--path ./tests/hugo-npm \
 		-e BP_LOG_LEVEL=DEBUG \

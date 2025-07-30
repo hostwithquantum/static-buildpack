@@ -25,6 +25,35 @@ func Detect(logs scribe.Emitter) packit.DetectFunc {
 
 		webServer := meta.DetectWebServer()
 
+		logs.Detail("Select webserver: %s", webServer)
+
+		buildPlanRequirements := []packit.BuildPlanRequirement{
+			{
+				Name: "static-buildpack",
+				Metadata: map[string]any{
+					"static-type": string(finder.GetStaticType()),
+				},
+			},
+			{
+				Name: webServer,
+				Metadata: map[string]any{
+					"launch": true,
+				},
+			},
+		}
+
+		if meta.NeedsNPM(workingDir) {
+			// require 'node' and therefor: https://github.com/paketo-buildpacks/node-engine
+			buildPlanRequirements = append(buildPlanRequirements, packit.BuildPlanRequirement{
+				Name: "node",
+				Metadata: map[string]any{
+					"build": true,
+				},
+			})
+
+			logs.Detail("Site requires node/npm")
+		}
+
 		return packit.DetectResult{
 			Plan: packit.BuildPlan{
 				Provides: []packit.BuildPlanProvision{
@@ -32,20 +61,7 @@ func Detect(logs scribe.Emitter) packit.DetectFunc {
 						Name: "static-buildpack",
 					},
 				},
-				Requires: []packit.BuildPlanRequirement{
-					{
-						Name: "static-buildpack",
-						Metadata: map[string]any{
-							"static-type": string(finder.GetStaticType()),
-						},
-					},
-					{
-						Name: webServer,
-						Metadata: map[string]any{
-							"launch": true,
-						},
-					},
-				},
+				Requires: buildPlanRequirements,
 			},
 		}, nil
 	}
