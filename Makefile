@@ -14,7 +14,7 @@ clean:
 	rm -rf dist/
 	rm -f bin/build
 	rm -f bin/detect
-	pack buildpack remove $(bp) || true
+	pack buildpack yank $(bp) || true
 
 setup:
 	pack config default-builder $(builder)
