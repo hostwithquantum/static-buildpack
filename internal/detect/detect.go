@@ -43,9 +43,25 @@ func Detect(logs scribe.Emitter) packit.DetectFunc {
 		}
 
 		if meta.NeedsNPM(workingDir) {
-			// require 'node' and therefor: https://github.com/paketo-buildpacks/node-engine
+			// require 'node';
 			buildPlanRequirements = append(buildPlanRequirements, packit.BuildPlanRequirement{
 				Name: "node",
+				Metadata: map[string]any{
+					"build": true,
+				},
+			})
+
+			// require 'node_modules' and therefor: https://github.com/paketo-buildpacks/npm-install
+			buildPlanRequirements = append(buildPlanRequirements, packit.BuildPlanRequirement{
+				Name: "node_modules",
+				Metadata: map[string]any{
+					"build": true,
+				},
+			})
+
+			// require: https://github.com/paketo-buildpacks/node-run-script
+			buildPlanRequirements = append(buildPlanRequirements, packit.BuildPlanRequirement{
+				Name: "node-run-script",
 				Metadata: map[string]any{
 					"build": true,
 				},
