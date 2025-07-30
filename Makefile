@@ -1,4 +1,4 @@
-.PHONY: build clean package setup test test-hugo test-mdbook
+.PHONY: build clean package setup test test-hugo test-hugo-npm test-mdbook
 
 builder:=paketobuildpacks/builder-jammy-base:latest
 bp:=static-buildpack
@@ -36,6 +36,18 @@ test-hugo:
 		-e BP_WEB_SERVER_ROOT=./ \
 		--buildpack ./meta-buildpack
 	# docker run -it --platform linux/amd64 --rm --env PORT=8666 -p 8666:8666 test-hugo-app
+
+test-hugo-npm:
+	$(pack_cmd) build \
+		test-hugo-app \
+		--builder $(builder) \
+		--path ./tests/hugo-npm \
+		-e BP_LOG_LEVEL=DEBUG \
+		-e BP_WEB_SERVER=nginx \
+		-e BP_WEB_SERVER_ROOT=./ \
+		-e BP_NODE_RUN_SCRIPTS=build \
+		-e BP_KEEP_FILES=static/style.css \
+		--buildpack ./meta-buildpack
 
 test-mdbook:
 	$(pack_cmd) build \
