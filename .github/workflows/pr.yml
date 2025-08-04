@@ -47,12 +47,11 @@ jobs:
   test:
     needs: build
     runs-on: ubuntu-latest
-    name: ${{ matrix.test }}
+    name: ${{ matrix.test }}-${{ matrix.webserver }}
     strategy:
       matrix:
-        include:
-          - test: test-hugo
-          - test: test-mdbook
+        test: [test-hugo, test-hugo-npm, test-mdbook]
+        webserver: [nginx, httpd]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/download-artifact@v4
@@ -63,4 +62,10 @@ jobs:
       - uses: buildpacks/github-actions/setup-tools@v5.9.3
       - uses: buildpacks/github-actions/setup-pack@v5.9.3
       - run: make setup
-      - run: make ${{ matrix.test }}
+      - run: make ${{ matrix.test }}-${{ matrix.webserver }}
+      - name: verify the correct webserver is installed
+        run: |
+          docker run --rm \
+            --entrypoint launcher \
+            ${{ matrix.test }}-${{ matrix.webserver }}-app \
+            ${{ matrix.webserver }} -v

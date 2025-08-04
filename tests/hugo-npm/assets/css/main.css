@@ -1,0 +1,14 @@
+@import "tailwindcss";
+
+/* Your custom styles here */
+@layer components {
+    .link {
+        color: var(--color-blue);
+        @apply underline;
+    }
+}
+
+a {
+    color: black;
+    @apply underline;
+}
