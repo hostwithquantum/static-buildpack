@@ -37,39 +37,47 @@ package: setup build prepare-dev
 	 		$(bp) \
 			--config package.toml
 
-test-hugo:
+test-hugo-npm-%: webserver=$*
+test-hugo-npm-%:
 	$(pack_cmd) build \
-		test-hugo-app \
-		--builder $(builder) \
-		--path ./tests/hugo-example \
-		-e BP_LOG_LEVEL=DEBUG \
-		-e BP_WEB_SERVER=nginx \
-		-e BP_WEB_SERVER_ROOT=./ \
-		--buildpack ./meta-buildpack
-	$(info docker run -it --platform linux/amd64 --rm --env PORT=8666 -p 8666:8666 test-hugo-app)
-
-test-hugo-npm:
-	$(pack_cmd) build \
-		test-hugo-npm-app \
+		hugo-npm-$(webserver)-app \
 		--builder $(builder) \
 		--path ./tests/hugo-npm \
 		-e BP_LOG_LEVEL=DEBUG \
-		-e BP_WEB_SERVER=nginx \
+		-e BP_WEB_SERVER=$(webserver) \
 		-e BP_WEB_SERVER_ROOT=./ \
 		-e BP_NODE_RUN_SCRIPTS=build \
 		-e BP_KEEP_FILES=static/style.css \
 		--buildpack ./meta-buildpack
-	$(info docker run -it --platform linux/amd64 --rm --env PORT=8666 -p 8666:8666 test-hugo-npm-app)
+	$(info docker run -it --platform linux/amd64 --rm --env PORT=8666 -p 8666:8666 hugo-npm-$(webserver)-app)
 
-test-mdbook:
+test-hugo-%: webserver=$*
+test-hugo-%:
 	$(pack_cmd) build \
-		test-mdbook-app \
+		hugo-$(webserver)-app \
+		--builder $(builder) \
+		--path ./tests/hugo-example \
+		-e BP_LOG_LEVEL=DEBUG \
+		-e BP_WEB_SERVER=$(webserver) \
+		-e BP_WEB_SERVER_ROOT=./ \
+		--buildpack ./meta-buildpack
+	$(info docker run -it --platform linux/amd64 --rm --env PORT=8666 -p 8666:8666 hugo-$(webserver)-app)
+
+test-mdbook-%: webserver=$*
+test-mdbook-%:
+	$(pack_cmd) build \
+		mdbook-$(webserver)-app \
 		--builder $(builder) \
 		--path ./tests/mdbook-example \
 		-e BP_LOG_LEVEL=DEBUG \
-		-e BP_WEB_SERVER=nginx \
+		-e BP_WEB_SERVER=$(webserver) \
 		-e BP_WEB_SERVER_ROOT=./ \
 		--buildpack ./meta-buildpack
-	$(info docker run -it --platform linux/amd64 --rm --env PORT=8666 -p 8666:8666 test-mdbook-app)
+	$(info docker run -it --platform linux/amd64 --rm --env PORT=8666 -p 8666:8666 mdbook-$(webserver)-app)
 
-test: setup test-hugo test-mdbook
+# Legacy targets for backwards compatibility
+test-hugo: test-hugo-nginx
+test-hugo-npm: test-hugo-npm-nginx
+test-mdbook: test-mdbook-nginx
+
+test: package test-hugo-nginx test-hugo-httpd test-hugo-npm-nginx test-hugo-npm-httpd test-mdbook-nginx test-mdbook-httpd
