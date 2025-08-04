@@ -40,7 +40,7 @@ package: setup build prepare-dev
 test-hugo-npm-%: webserver=$*
 test-hugo-npm-%:
 	$(pack_cmd) build \
-		hugo-npm-$(webserver)-app \
+		test-hugo-npm-$(webserver)-app \
 		--builder $(builder) \
 		--path ./tests/hugo-npm \
 		-e BP_LOG_LEVEL=DEBUG \
@@ -54,7 +54,7 @@ test-hugo-npm-%:
 test-hugo-%: webserver=$*
 test-hugo-%:
 	$(pack_cmd) build \
-		hugo-$(webserver)-app \
+		test-hugo-$(webserver)-app \
 		--builder $(builder) \
 		--path ./tests/hugo-example \
 		-e BP_LOG_LEVEL=DEBUG \
@@ -66,7 +66,7 @@ test-hugo-%:
 test-mdbook-%: webserver=$*
 test-mdbook-%:
 	$(pack_cmd) build \
-		mdbook-$(webserver)-app \
+		test-mdbook-$(webserver)-app \
 		--builder $(builder) \
 		--path ./tests/mdbook-example \
 		-e BP_LOG_LEVEL=DEBUG \
