@@ -51,9 +51,12 @@ jobs:
     strategy:
       matrix:
         include:
-          - test: test-hugo
-          - test: test-hugo-npm
-          - test: test-mdbook
+          - test: test-hugo-nginx
+          - test: test-hugo-httpd
+          - test: test-hugo-npm-nginx
+          - test: test-hugo-npm-httpd
+          - test: test-mdbook-nginx
+          - test: test-mdbook-httpd
     steps:
       - uses: actions/checkout@v4
       - uses: actions/download-artifact@v4
