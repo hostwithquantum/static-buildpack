@@ -1,0 +1,23 @@
+baseURL = 'https://example.org/'
+languageCode = 'en-us'
+title = 'My New Hugo Site'
+
+[module]
+  [[module.imports]]
+    path = "github.com/adityatelange/hugo-PaperMod"
+
+enableInlineShortcodes = true
+enableRobotsTXT = true
+buildDrafts = true
+buildFuture = true
+buildExpired = true
+enableEmoji = true
+
+[minify]
+  disableXML = true
+  minifyOutput = false
+
+[params]
+  [homeInfoParams]
+    Title = "Hi there"
+    Content = "Welcome to my blog"
