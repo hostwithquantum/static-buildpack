@@ -37,6 +37,18 @@ package: setup build prepare-dev
 	 		$(bp) \
 			--config package.toml
 
+test-hugo-go-%: webserver=$*
+test-hugo-go-%:
+	$(pack_cmd) build \
+		test-hugo-go-$(webserver)-app \
+		--builder $(builder) \
+		--path ./tests/hugo-go \
+		-e BP_LOG_LEVEL=DEBUG \
+		-e BP_WEB_SERVER=$(webserver) \
+		-e BP_WEB_SERVER_ROOT=./ \
+		--buildpack ./meta-buildpack
+	$(info docker run -it --platform linux/amd64 --rm --env PORT=8666 -p 8666:8666 hugo-go-$(webserver)-app)
+
 test-hugo-npm-%: webserver=$*
 test-hugo-npm-%:
 	$(pack_cmd) build \

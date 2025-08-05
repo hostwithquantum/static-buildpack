@@ -17,6 +17,18 @@ func DetectWebServer() string {
 	return "nginx"
 }
 
+// some Hugo sites use go modules to manage themes
+func NeedsGO(workingDir string, logs scribe.Emitter) bool {
+	logs.Process("Check for go.mod")
+
+	if _, err := os.Stat(filepath.Join(workingDir, "go.mod")); err == nil {
+		logs.Detail("Found go.mod: go needed")
+		return true
+	}
+
+	return false
+}
+
 // support node while building
 func NeedsNPM(workingDir string, logs scribe.Emitter) bool {
 	logs.Process("Check for node/npm")

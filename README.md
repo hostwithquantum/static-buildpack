@@ -35,8 +35,9 @@ Some configuration is available, please see [api](./api/) for details.
 - `paketo-buildpacks/node-engine`
 - `paketo-buildpacks/npm-install`
 - `paketo-buildpacks/node-run-script`
+- `paketo-buildpacks/go-dist`
 
-Either of these can be customized through various environment variables or a full config file for the web server. More details are available [on our documentation](https://www.runway.horse/docs/recipes/webservers/).
+Either of these can be customized through various environment variables. The web server can be customized through a full config file; more details are available [on our documentation](https://www.runway.horse/docs/recipes/webservers/).
 
 ### NodeJS
 

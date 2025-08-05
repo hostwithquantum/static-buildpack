@@ -2,4 +2,6 @@
 /dist/
 /tests/hugo-example/public
 /tests/hugo-npm/public
+/tests/hugo-go/public
+/tests/*/.hugo_build.lock
 buildpack.toml.bak
