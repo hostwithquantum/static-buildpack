@@ -9,8 +9,11 @@ import (
 // By default, this will be the "WorkingDir" from build/detect Context, but it may
 // be extended via config.
 func GetWorkingDir(defaultWorkDir string) string {
-	if path := os.Getenv(StaticPathEnv); path != "" {
-		return filepath.Join(defaultWorkDir, path)
+	if path, ok := os.LookupEnv(StaticPathEnv); ok {
+		if path != "" {
+			return filepath.Join(defaultWorkDir, path)
+		}
 	}
+
 	return defaultWorkDir
 }
