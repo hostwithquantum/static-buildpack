@@ -42,6 +42,17 @@ func Detect(logs scribe.Emitter) packit.DetectFunc {
 			},
 		}
 
+		if finder.GetStaticType() == "hugo" {
+			if meta.NeedsGO(workingDir, logs) {
+				buildPlanRequirements = append(buildPlanRequirements, packit.BuildPlanRequirement{
+					Name: "go",
+					Metadata: map[string]any{
+						"build": true,
+					},
+				})
+			}
+		}
+
 		if meta.NeedsNPM(workingDir, logs) {
 			// require 'node' to trigger node-engine buildpack
 			buildPlanRequirements = append(buildPlanRequirements, packit.BuildPlanRequirement{

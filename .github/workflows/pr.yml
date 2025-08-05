@@ -50,7 +50,7 @@ jobs:
     name: ${{ matrix.test }}-${{ matrix.webserver }}
     strategy:
       matrix:
-        test: [test-hugo, test-hugo-npm, test-mdbook]
+        test: [test-hugo, test-hugo-npm, test-mdbook, test-hugo-go]
         webserver: [nginx, httpd]
     steps:
       - uses: actions/checkout@v4
