@@ -14,7 +14,7 @@ jobs:
       DOCKER_REPO: "buildpacks"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: actions/setup-go@v5
         with:
           go-version-file: go.mod
@@ -53,8 +53,8 @@ jobs:
         test: [test-hugo, test-hugo-npm, test-mdbook, test-hugo-go]
         webserver: [nginx, httpd]
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v4
+      - uses: actions/checkout@v5
+      - uses: actions/download-artifact@v5
         with:
           name: static-buildpack
       - run: docker load -i static-buildpack.tar
