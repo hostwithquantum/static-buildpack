@@ -2,8 +2,8 @@ name: update dependencies
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: '1 6 * * *' # daily at 05:01 UTC
+  # schedule:
+  #   - cron: '1 6 * * *' # daily at 05:01 UTC
 
 
 concurrency: buildpack_update
@@ -16,21 +16,21 @@ jobs:
       - id: update
         uses: paketo-buildpacks/github-config/actions/buildpack/update@main
         with:
-          buildpack_toml_path: buildpack.toml
-          package_toml_path: package.toml
+          buildpack_toml_path: meta-buildpack/buildpack.toml
+          package_toml_path: meta-buildpack/package.toml
           no_cnb_registry: true
       - id: commit
         uses: paketo-buildpacks/github-config/actions/pull-request/create-commit@main
         with:
-          message: "chore(deps): update buildpacks in buildpack.toml"
+          message: "chore(deps): update meta-buildpack"
           pathspec: "."
       - if: ${{ steps.commit.outputs.commit_sha != '' && steps.update.outputs.semver_bump != '<none>'}}
         uses: paketo-buildpacks/github-config/actions/pull-request/push-branch@main
         with:
-          branch: automation/buildpack.toml/update
-      # - if: ${{ steps.commit.outputs.commit_sha != '' && steps.update.outputs.semver_bump != '<none>' }}
-      #   uses: paketo-buildpacks/github-config/actions/pull-request/open@main
-      #   with:
-      #     token: ${{ secrets.GITHUB_TOKEN }}
-      #     title: "chore(deps): update buildpacks"
-      #     branch: automation/buildpack.toml/update
+          branch: automation/meta-buildpack/update
+      - if: ${{ steps.commit.outputs.commit_sha != '' && steps.update.outputs.semver_bump != '<none>' }}
+        uses: paketo-buildpacks/github-config/actions/pull-request/open@main
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          title: "chore(deps): update meta-buildpack"
+          branch: automation/meta-buildpack/update
