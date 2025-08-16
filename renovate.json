@@ -3,7 +3,7 @@
   "extends": [
     "config:base"
   ],
-  "enabledManagers": [],
+  "enabledManagers": ["buildpacks"],
   "buildpacks": {
     "fileMatch": ["meta-buildpack/buildpack\\.toml$"]
   }
