@@ -1,10 +1,14 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
-    "config:base"
+    "config:recommended"
   ],
-  "enabledManagers": ["buildpacks"],
+  "enabledManagers": [
+    "buildpacks"
+  ],
   "buildpacks": {
-    "fileMatch": ["meta-buildpack/buildpack\\.toml$"]
+    "managerFilePatterns": [
+      "/meta-buildpack/buildpack\\.toml$/"
+    ]
   }
 }
