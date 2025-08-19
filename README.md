@@ -1,6 +1,6 @@
-# static-buildpack
+# runway-buildpacks/static-websites
 
-A buildpack static websites, aka for:
+A buildpack to build static websites:
 
 * gohugo
 * mdBook

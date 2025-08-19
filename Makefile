@@ -1,7 +1,7 @@
 .PHONY: build clean package setup test test-hugo test-hugo-npm test-mdbook prepare-dev restore-version
 
 builder:=paketobuildpacks/builder-jammy-base:latest
-bp:=static-buildpack
+bp:=runway-buildpacks/static-websites
 
 pack_cmd:=pack -v
 
@@ -35,6 +35,7 @@ package: setup build prepare-dev
 	$(info packaging $(bp))
 	$(pack_cmd) buildpack package \
 	 		$(bp) \
+			--target linux/amd64 \
 			--config package.toml
 
 test-hugo-go-%: webserver=$*

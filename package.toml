@@ -1,6 +1,6 @@
 [buildpack]
 uri = "." 
 
-# Deprecated
-[platform]
+[[targets]]
 os = "linux"
+arch = "amd64"
