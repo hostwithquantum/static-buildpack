@@ -1,12 +1,12 @@
 api = "0.7"
 
 [buildpack]
-  id = "static-buildpack"
+  id = "runway-buildpacks/static-websites"
   name = "Static Buildpack"
   version = "__replace__"
   homepage = "https://www.runway.horse/docs/"
-  keywords = ["hugo", "mdbook"]
-  description = "A buildpack for Hugo & mdbook (for Runway)"
+  keywords = ["hugo", "mdbook", "static website generator"]
+  description = "A buildpack for Hugo & mdbook (by Runway)"
 
   [[buildpack.licenses]]
     type = "BSD-2-Clause"

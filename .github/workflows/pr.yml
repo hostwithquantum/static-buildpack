@@ -23,22 +23,20 @@ jobs:
       - id: extract-package
         shell: bash
         run: |
-          BP_ID="$(cat buildpack.toml | yj -t | jq -r .buildpack.id)"
-          PACKAGE="${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_REPO }}/$(echo "$BP_ID" | sed 's/\//_/g')"
+          BP_ID="$(cat buildpack.toml | yj -t | jq -r '.buildpack.id | split("/")[1]')"
+          PACKAGE="${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_REPO }}/${BP_ID}"
           echo "package=${PACKAGE}" >> $GITHUB_OUTPUT
+          echo "Generated name: ${PACKAGE}" >> $GITHUB_STEP_SUMMARY
       - run: sed -i.bak -E "s/__replace__/dev/" buildpack.toml
       - uses: goreleaser/goreleaser-action@v6
         with:
           version: '~> v2'
           install-only: true
-      - run: make build
-      - run: make setup
       - run: make package
       - name: Export buildpack image
         run: |
-          docker save static-buildpack:latest -o static-buildpack.tar
-      - name: Upload buildpack artifact
-        uses: actions/upload-artifact@v4
+          docker save runway-buildpacks/static-websites:latest -o static-buildpack.tar
+      - uses: actions/upload-artifact@v4
         with:
           name: static-buildpack
           path: static-buildpack.tar
@@ -58,7 +56,7 @@ jobs:
         with:
           name: static-buildpack
       - run: docker load -i static-buildpack.tar
-      - run: docker images static-buildpack:latest
+      - run: docker images runway-buildpacks/static-websites:latest
       - uses: buildpacks/github-actions/setup-tools@v5.9.3
       - uses: buildpacks/github-actions/setup-pack@v5.9.3
       - run: make setup
