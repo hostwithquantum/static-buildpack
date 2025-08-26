@@ -32,6 +32,7 @@ jobs:
       - uses: goreleaser/goreleaser-action@v6
         with:
           version: '~> v2'
+          args: release --snapshot --clean
       - run: make setup
       - run: make prep VERSION=dev BUILD_DIR=${{ env.BUILD_DIR }}
       - run: |
