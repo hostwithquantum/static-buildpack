@@ -10,8 +10,7 @@ permissions:
 jobs:
   build:
     env:
-      DOCKER_REGISTRY: "r.planetary-quantum.com"
-      DOCKER_REPO: "buildpacks"
+      DOCKER_REGISTRY: "ttl.sh"
       BUILD_DIR: build
     outputs:
       package: ${{ steps.setup.outputs.package }}
@@ -26,12 +25,14 @@ jobs:
       - id: setup
         shell: bash
         run: |
-          PACKAGE="${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_REPO }}/static-websites"
+          DOCKER_REPO=$(uuidgen)
+          PACKAGE="${{ env.DOCKER_REGISTRY }}/${DOCKER_REPO}:20m"
           echo "package=${PACKAGE}" >> $GITHUB_OUTPUT
           echo "Generated name: ${PACKAGE}" >> $GITHUB_STEP_SUMMARY
       - uses: goreleaser/goreleaser-action@v6
         with:
           version: '~> v2'
+          args: release --snapshot --clean
       - run: make setup
       - run: make prep VERSION=dev BUILD_DIR=${{ env.BUILD_DIR }}
       - run: |
@@ -40,14 +41,9 @@ jobs:
             --target linux/amd64 \
             --config package.toml
         working-directory: ${{ env.BUILD_DIR }}
-      - name: Export buildpack image
+      - name: publish temporary image
         run: |
-          docker save ${{ steps.setup.outputs.package }}:latest -o static-buildpack.tar
-      - uses: actions/upload-artifact@v4
-        with:
-          name: static-buildpack
-          path: static-buildpack.tar
-          retention-days: 1
+          docker push ${{ steps.setup.outputs.package }}
 
   test:
     needs: build
@@ -59,11 +55,10 @@ jobs:
         webserver: [nginx, httpd]
     steps:
       - uses: actions/checkout@v5
-      - uses: actions/download-artifact@v5
-        with:
-          name: static-buildpack
-      - run: docker load -i static-buildpack.tar
-      - run: docker images ${{ needs.build.outputs.package }}:latest
+      - run: docker pull ${{ needs.build.outputs.package }}
+      - name: Update meta-buildpack package.toml
+        run: |
+          sed -i 's|docker://r.planetary-quantum.com/buildpacks/static-websites:latest|docker://${{ needs.build.outputs.package }}|' meta-buildpack/package.toml
       - uses: buildpacks/github-actions/setup-tools@v5.9.3
       - uses: buildpacks/github-actions/setup-pack@v5.9.3
       - run: make setup
