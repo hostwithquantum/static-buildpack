@@ -1,9 +1,12 @@
-.PHONY: build clean package setup test test-hugo test-hugo-npm test-mdbook prepare-dev restore-version
+.PHONY: build clean setup test test-hugo test-hugo-npm test-mdbook
 
 builder:=paketobuildpacks/builder-jammy-base:latest
 bp:=runway-buildpacks/static-websites
 
 pack_cmd:=pack -v
+
+BUILD_DIR?=./build
+VERSION?=dev
 
 build:
 	GOOS=linux GOARCH=amd64 goreleaser build --single-target --clean --snapshot
@@ -19,24 +22,6 @@ clean: restore-version
 setup:
 	pack config default-builder $(builder)
 	pack config trusted-builders add $(builder)
-
-prepare-dev:
-	@if [ ! -f buildpack.toml.bak ]; then \
-		cp buildpack.toml buildpack.toml.bak; \
-	fi
-	@sed -i.tmp -E "s/__replace__/dev/" buildpack.toml && rm buildpack.toml.tmp
-
-restore-version:
-	@if [ -f buildpack.toml.bak ]; then \
-		mv buildpack.toml.bak buildpack.toml; \
-	fi
-
-package: setup build prepare-dev
-	$(info packaging $(bp))
-	$(pack_cmd) buildpack package \
-	 		$(bp) \
-			--target linux/amd64 \
-			--config package.toml
 
 test-hugo-go-%: webserver=$*
 test-hugo-go-%:
@@ -94,3 +79,13 @@ test-hugo-npm: test-hugo-npm-nginx
 test-mdbook: test-mdbook-nginx
 
 test: package test-hugo-nginx test-hugo-httpd test-hugo-npm-nginx test-hugo-npm-httpd test-mdbook-nginx test-mdbook-httpd
+
+.PHONY: prep
+prep:
+	mkdir -p $(BUILD_DIR)/bin
+	cp dist/build_linux_amd64*/build $(BUILD_DIR)/bin/
+	cp dist/detect_linux_amd64*/detect $(BUILD_DIR)/bin/
+	cp buildpack.toml $(BUILD_DIR)/
+	sed -i.bak -E "s/__replace__/$(VERSION)/" $(BUILD_DIR)/buildpack.toml
+	rm -f $(BUILD_DIR)/buildpack.toml.bak
+	cp package.toml $(BUILD_DIR)/
