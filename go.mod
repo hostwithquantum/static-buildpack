@@ -15,7 +15,7 @@ require (
 	github.com/Masterminds/semver/v3 v3.4.0 // indirect
 	github.com/gabriel-vasile/mimetype v1.4.9 // indirect
 	github.com/pelletier/go-toml v1.9.5 // indirect
-	github.com/stretchr/testify v1.11.0
+	github.com/stretchr/testify v1.11.1
 	github.com/ulikunitz/xz v0.5.12 // indirect
 	golang.org/x/net v0.42.0 // indirect
 )
