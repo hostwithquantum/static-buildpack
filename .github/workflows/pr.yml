@@ -21,8 +21,8 @@ jobs:
       - uses: actions/setup-go@v5
         with:
           go-version-file: go.mod
-      - uses: buildpacks/github-actions/setup-tools@v5.9.3
-      - uses: buildpacks/github-actions/setup-pack@v5.9.3
+      - uses: buildpacks/github-actions/setup-tools@v5.9.4
+      - uses: buildpacks/github-actions/setup-pack@v5.9.4
       - id: setup
         shell: bash
         run: |
@@ -64,8 +64,8 @@ jobs:
           name: static-buildpack
       - run: docker load -i static-buildpack.tar
       - run: docker images ${{ needs.build.outputs.package }}:latest
-      - uses: buildpacks/github-actions/setup-tools@v5.9.3
-      - uses: buildpacks/github-actions/setup-pack@v5.9.3
+      - uses: buildpacks/github-actions/setup-tools@v5.9.4
+      - uses: buildpacks/github-actions/setup-pack@v5.9.4
       - run: make setup
       - run: make ${{ matrix.test }}-${{ matrix.webserver }}
       - name: verify the correct webserver is installed
