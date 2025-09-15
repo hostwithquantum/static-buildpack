@@ -11,7 +11,7 @@ func Detect(logs scribe.Emitter) packit.DetectFunc {
 	return func(ctx packit.DetectContext) (packit.DetectResult, error) {
 		logs.Title("%s %s", ctx.Info.Name, ctx.Info.Version)
 
-		workingDir := api.GetWorkingDir(ctx.WorkingDir)
+		workingDir := api.GetWorkingDir(ctx.CNBPath, ctx.WorkingDir)
 
 		logs.Process("Checking working directory: %s", workingDir)
 

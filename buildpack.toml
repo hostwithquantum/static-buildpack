@@ -15,3 +15,18 @@ api = "0.7"
 [metadata]
   include-files = ["bin/build", "bin/detect", "buildpack.toml"]
   pre-package = "make package"
+
+  [[metadata.configurations]]
+    default = ""
+    description = "A relative path to the hugo or mdbook site, will be appended to the working directory"
+    name = "BP_RUNWAY_STATIC_PATH"
+
+  [[metadata.configurations]]
+    default = "0.147.4"
+    description = "Hugo version to install"
+    name = "BP_RUNWAY_STATIC_HUGO_VERSION"
+
+  [[metadata.configurations]]
+    default = "0.4.49"
+    description = "MdBook version to install"
+    name = "BP_RUNWAY_STATIC_MDBOOK_VERSION"
