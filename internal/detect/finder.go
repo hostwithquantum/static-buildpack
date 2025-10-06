@@ -1,9 +1,9 @@
 package detect
 
 import (
-	"fmt"
 	"path/filepath"
 
+	"github.com/paketo-buildpacks/packit/v2"
 	"github.com/paketo-buildpacks/packit/v2/fs"
 	"github.com/paketo-buildpacks/packit/v2/scribe"
 )
@@ -42,6 +42,12 @@ func NewFinder(log scribe.Emitter) *finder {
 }
 
 func (f *finder) Find(workingDir string) error {
+	if wdOK, err := fs.Exists(workingDir); err != nil {
+		return err
+	} else if !wdOK {
+		return packit.Fail.WithMessage("WorkingDir does not exist: %s", workingDir)
+	}
+
 	f.log.Process("Detecting static site configuration")
 	for _, metaFile := range f.Files {
 		f.log.Subprocess(metaFile)
@@ -55,7 +61,7 @@ func (f *finder) Find(workingDir string) error {
 			return nil
 		}
 	}
-	return fmt.Errorf("no static site configuration found")
+	return packit.Fail.WithMessage("no static site configuration found in: %s", workingDir)
 }
 
 func (f *finder) GetStaticType() StaticType {

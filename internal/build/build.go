@@ -18,10 +18,6 @@ type (
 const (
 	HugoType   StaticType = "hugo"
 	MdBookType StaticType = "mdbook"
-
-	// defaults
-	HugoVersion   = "0.147.4"
-	MdBookVersion = "0.4.49"
 )
 
 func Build(log scribe.Emitter) packit.BuildFunc {
@@ -55,7 +51,7 @@ func Build(log scribe.Emitter) packit.BuildFunc {
 		}
 
 		// Get working directory
-		workingDir := api.GetWorkingDir(ctx.WorkingDir)
+		workingDir := api.GetWorkingDir(ctx.CNBPath, ctx.WorkingDir)
 
 		// Create layers
 		staticLayer, err := ctx.Layers.Get("static")
@@ -70,18 +66,18 @@ func Build(log scribe.Emitter) packit.BuildFunc {
 
 		switch staticType {
 		case HugoType:
-			version := os.Getenv(api.HugoVersionEnv)
+			version := api.GetDefault(ctx.CNBPath, api.HugoVersionEnv)
 			if version == "" {
-				version = HugoVersion
+				return packit.BuildResult{}, fmt.Errorf("no Hugo version specified and no default found in buildpack.toml")
 			}
 			if err := installHugo(log, staticLayer, version); err != nil {
 				return packit.BuildResult{}, fmt.Errorf("failed to install Hugo: %w", err)
 			}
 			args = append(args, []string{"--source", ".", "--destination", publicDir, "--minify"}...)
 		case MdBookType:
-			version := os.Getenv(api.MdBookVersionEnv)
+			version := api.GetDefault(ctx.CNBPath, api.MdBookVersionEnv)
 			if version == "" {
-				version = MdBookVersion
+				return packit.BuildResult{}, fmt.Errorf("no MdBook version specified and no default found in buildpack.toml")
 			}
 			if err := installMdBook(log, staticLayer, version); err != nil {
 				return packit.BuildResult{}, fmt.Errorf("failed to install mdBook: %w", err)
