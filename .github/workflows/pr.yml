@@ -16,8 +16,8 @@ jobs:
       - uses: actions/setup-go@v6
         with:
           go-version-file: go.mod
-      - uses: buildpacks/github-actions/setup-tools@v5.9.4
-      - uses: buildpacks/github-actions/setup-pack@v5.9.4
+      - uses: buildpacks/github-actions/setup-tools@v5.9.5
+      - uses: buildpacks/github-actions/setup-pack@v5.9.5
       - id: setup
         shell: bash
         run: |
@@ -55,8 +55,8 @@ jobs:
       - name: Update meta-buildpack package.toml
         run: |
           sed -i 's|docker://r.planetary-quantum.com/buildpacks/static-websites:latest|docker://${{ needs.build.outputs.package }}|' meta-buildpack/package.toml
-      - uses: buildpacks/github-actions/setup-tools@v5.9.4
-      - uses: buildpacks/github-actions/setup-pack@v5.9.4
+      - uses: buildpacks/github-actions/setup-tools@v5.9.5
+      - uses: buildpacks/github-actions/setup-pack@v5.9.5
       - run: make setup
       - run: make ${{ matrix.test }}-${{ matrix.webserver }}
       - name: verify the correct webserver is installed

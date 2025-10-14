@@ -36,8 +36,8 @@ jobs:
       - run: |
           cp dist/build_linux_amd64_v1/build ./bin/build
           cp dist/detect_linux_amd64_v1/detect ./bin/detect
-      - uses: buildpacks/github-actions/setup-tools@v5.9.4
-      - uses: buildpacks/github-actions/setup-pack@v5.9.4
+      - uses: buildpacks/github-actions/setup-tools@v5.9.5
+      - uses: buildpacks/github-actions/setup-pack@v5.9.5
       - id: extract-version
         shell: bash
         run: |
