@@ -16,7 +16,7 @@ jobs:
       DOCKER_REGISTRY: "r.planetary-quantum.com"
       DOCKER_REPO: "buildpacks"
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
       - uses: actions/setup-go@v6
@@ -36,8 +36,8 @@ jobs:
       - run: |
           cp dist/build_linux_amd64_v1/build ./bin/build
           cp dist/detect_linux_amd64_v1/detect ./bin/detect
-      - uses: buildpacks/github-actions/setup-tools@v5.9.6
-      - uses: buildpacks/github-actions/setup-pack@v5.9.6
+      - uses: buildpacks/github-actions/setup-tools@v5.9.7
+      - uses: buildpacks/github-actions/setup-pack@v5.9.7
       - id: extract-version
         shell: bash
         run: |
