@@ -12,12 +12,12 @@ jobs:
       package: ${{ steps.setup.outputs.package }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - uses: actions/setup-go@v6
         with:
           go-version-file: go.mod
-      - uses: buildpacks/github-actions/setup-tools@v5.9.6
-      - uses: buildpacks/github-actions/setup-pack@v5.9.6
+      - uses: buildpacks/github-actions/setup-tools@v5.9.7
+      - uses: buildpacks/github-actions/setup-pack@v5.9.7
       - id: setup
         shell: bash
         run: |
@@ -50,13 +50,13 @@ jobs:
         test: [test-hugo, test-hugo-npm, test-mdbook, test-hugo-go]
         webserver: [nginx, httpd]
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - run: docker pull ${{ needs.build.outputs.package }}
       - name: Update meta-buildpack package.toml
         run: |
           sed -i 's|docker://r.planetary-quantum.com/buildpacks/static-websites:latest|docker://${{ needs.build.outputs.package }}|' meta-buildpack/package.toml
-      - uses: buildpacks/github-actions/setup-tools@v5.9.6
-      - uses: buildpacks/github-actions/setup-pack@v5.9.6
+      - uses: buildpacks/github-actions/setup-tools@v5.9.7
+      - uses: buildpacks/github-actions/setup-pack@v5.9.7
       - run: make setup
       - run: make ${{ matrix.test }}-${{ matrix.webserver }}
       - name: verify the correct webserver is installed
