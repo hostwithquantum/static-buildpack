@@ -10,6 +10,8 @@ concurrency: buildpack_update
 
 jobs:
   update:
+    permissions:
+      contents: write
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -27,10 +29,4 @@ jobs:
       - if: ${{ steps.commit.outputs.commit_sha != '' && steps.update.outputs.semver_bump != '<none>'}}
         uses: paketo-buildpacks/github-config/actions/pull-request/push-branch@main
         with:
-          branch: automation/meta-buildpack/update
-      - if: ${{ steps.commit.outputs.commit_sha != '' && steps.update.outputs.semver_bump != '<none>' }}
-        uses: paketo-buildpacks/github-config/actions/pull-request/open@main
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          title: "chore(deps): update meta-buildpack"
-          branch: automation/meta-buildpack/update
+          branch: main
