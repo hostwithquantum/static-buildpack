@@ -1,0 +1,29 @@
+name: 'committer'
+description: 'set the committer'
+
+inputs:
+  slug:
+    description: 'the slug'
+    required: true
+  token:
+    description: 'the token'
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Get GitHub App User ID
+      shell: bash
+      id: get-user-id
+      run: echo "user-id=$(gh api "/users/${SLUG}[bot]" --jq .id)" >> "$GITHUB_OUTPUT"
+      env:
+        GH_TOKEN: ${{ inputs.token }}
+        SLUG: ${{ inputs.slug }}
+    - name: Configure git committer
+      shell: bash
+      run: |
+        git config --global user.name "${SLUG}[bot]"
+        git config --global user.email "${USER_ID}+${SLUG}[bot]@users.noreply.github.com"
+      env:
+        SLUG: ${{ inputs.slug }}
+        USER_ID: ${{ steps.get-user-id.outputs.user-id }}

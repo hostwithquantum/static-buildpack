@@ -7,6 +7,9 @@ on:
 permissions:
   contents: read
 
+env:
+  BP_VERSION: dev
+
 jobs:
   check_workflows:
     runs-on: ubuntu-latest
@@ -49,7 +52,10 @@ jobs:
           version: '~> v2'
           args: release --snapshot --clean
       - run: make setup
-      - run: make prep VERSION=dev BUILD_DIR=${{ env.BUILD_DIR }}
+      - run: |
+          make prep \
+            VERSION=${{ env.BP_VERSION }} \
+            BUILD_DIR=${{ env.BUILD_DIR }}
       - run: |
           pack buildpack package \
             ${STEPS_SETUP_OUTPUTS_PACKAGE} \
@@ -80,10 +86,10 @@ jobs:
         env:
           NEEDS_BUILD_OUTPUTS_PACKAGE: ${{ needs.build.outputs.package }}
       - name: Update meta-buildpack package.toml
-        run: |
-          sed -i "s|docker://r.planetary-quantum.com/buildpacks/static-websites:latest|docker://${NEEDS_BUILD_OUTPUTS_PACKAGE}|" meta-buildpack/package.toml
-        env:
-          NEEDS_BUILD_OUTPUTS_PACKAGE: ${{ needs.build.outputs.package }}
+        uses: ./.github/actions/update-static
+        with:
+          image: "docker://${{ needs.build.outputs.package }}"
+          version: ${{ env.BP_VERSION }}
       - uses: buildpacks/github-actions/setup-tools@06e250da5bb4ccb9a2103719a21d2a7f2252fe83 # v5.11.0
       - uses: buildpacks/github-actions/setup-pack@06e250da5bb4ccb9a2103719a21d2a7f2252fe83 # v5.11.0
       - run: make setup
