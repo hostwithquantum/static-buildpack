@@ -48,4 +48,6 @@ If your static website requires npm (for css/assets), then a `package.json` with
 
 ## Usage / License
 
-Feel free to use this, as you see fit. For the turn-key zero-config solution, please check out [our PaaS service Runway](https://www.runway.horse/).
+See [LICENSE](./LICENSE), so feel free to use this, as you see fit. Please star the repository.
+
+For the turn-key zero-config solution, please check out [our PaaS service Runway](https://www.runway.horse/).

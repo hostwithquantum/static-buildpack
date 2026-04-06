@@ -9,7 +9,7 @@ api = "0.7"
   description = "A buildpack for Hugo & mdbook (by Runway)"
 
   [[buildpack.licenses]]
-    type = "BSD-2-Clause"
+    type = "MPL-2.0"
     uri = "https://github.com/hostwithquantum/static-buildpack/blob/main/LICENSE"
 
 [metadata]
