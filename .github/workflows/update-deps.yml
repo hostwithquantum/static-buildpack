@@ -12,14 +12,32 @@ permissions: {}
 
 jobs:
   update:
-    permissions:
-      contents: write
-      pull-requests: write
     runs-on: ubuntu-latest
+    env:
+      BRANCH_NAME: automation/meta-buildpack/update
     steps:
+      - uses: actions/create-github-app-token@f8d387b68d61c58ab83c6c016672934102569859 # v3
+        id: app-token
+        with:
+          app-id: ${{ secrets.RUNWAY_CI_BOT_APP_ID }}
+          private-key: ${{ secrets.RUNWAY_CI_BOT_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+          permission-pull-requests: write
+          permission-contents: write
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
         with:
+          token: ${{ steps.app-token.outputs.token }}
           persist-credentials: true
+          fetch-depth: 0
+      - uses: ./.github/actions/committer
+        with:
+          slug: ${{ steps.app-token.outputs.app-slug }}
+          token: ${{ steps.app-token.outputs.token }}
+      - uses: paketo-buildpacks/github-config/actions/pull-request/checkout-branch@fde7603a84a3146cfab723bb3f0a2943219f7522
+        with:
+          branch: ${{ env.BRANCH_NAME }}
+      - name: Update static-websites version from release
+        uses: ./.github/actions/update-static
       - id: update
         uses: paketo-buildpacks/github-config/actions/buildpack/update@fde7603a84a3146cfab723bb3f0a2943219f7522 # main
         with:
@@ -34,10 +52,10 @@ jobs:
       - if: ${{ steps.commit.outputs.commit_sha != '' && steps.update.outputs.semver_bump != '<none>'}}
         uses: paketo-buildpacks/github-config/actions/pull-request/push-branch@fde7603a84a3146cfab723bb3f0a2943219f7522 # main
         with:
-          branch: automation/meta-buildpack/update
+          branch: ${{ env.BRANCH_NAME }}
       - if: ${{ steps.commit.outputs.commit_sha != '' && steps.update.outputs.semver_bump != '<none>' }}
         uses: paketo-buildpacks/github-config/actions/pull-request/open@fde7603a84a3146cfab723bb3f0a2943219f7522 # main
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ steps.app-token.outputs.token }}
           title: "chore(deps): update meta-buildpack"
           branch: automation/meta-buildpack/update

@@ -1,0 +1,44 @@
+name: "update-static"
+description: "Updates the static-websites buildpack reference in package.toml and buildpack.toml"
+inputs:
+  image:
+    description: 'Full image URI - if not provided, fetches latest release version'
+    required: false
+
+runs:
+  using: composite
+  steps:
+    - id: resolve
+      shell: bash
+      env:
+        IMAGE: ${{ inputs.image }}
+        GH_TOKEN: ${{ github.token }}
+      run: |
+        BP_ID=$(yq -p toml '.buildpack.id' buildpack.toml)
+        BP_NAME=${BP_ID##*/}
+        echo "bp_id=${BP_ID}" >> $GITHUB_OUTPUT
+        echo "bp_name=${BP_NAME}" >> $GITHUB_OUTPUT
+        if [ -n "${IMAGE}" ]; then
+          echo "image=${IMAGE}" >> $GITHUB_OUTPUT
+          echo "version=${IMAGE##*:}" >> $GITHUB_OUTPUT
+        else
+          version=$(gh release view --json tagName -q '.tagName | ltrimstr("v")')
+          echo "image=docker://r.planetary-quantum.com/buildpacks/${BP_NAME}:${version}" >> $GITHUB_OUTPUT
+          echo "version=${version}" >> $GITHUB_OUTPUT
+        fi
+    - shell: bash
+      env:
+        IMAGE: ${{ steps.resolve.outputs.image }}
+        VERSION: ${{ steps.resolve.outputs.version }}
+        BP_ID: ${{ steps.resolve.outputs.bp_id }}
+        BP_NAME: ${{ steps.resolve.outputs.bp_name }}
+        UPDATE_BUILDPACK: ${{ inputs.image == '' }}
+      run: |
+        sed -i \
+          "s|docker://r.planetary-quantum.com/buildpacks/${BP_NAME}:.*\"|${IMAGE}\"|" \
+          meta-buildpack/package.toml
+        if [ "${UPDATE_BUILDPACK}" = "true" ]; then
+          sed -i \
+            '/id = "'"${BP_ID//\//\\/}"'"/{ n; s/version = ".*"/version = "'"${VERSION}"'"/; }' \
+            meta-buildpack/buildpack.toml
+        fi
