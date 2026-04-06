@@ -42,9 +42,6 @@ jobs:
           args: release --clean
         env:
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
-      - run: |
-          cp dist/build_linux_amd64_v1/build ./bin/build
-          cp dist/detect_linux_amd64_v1/detect ./bin/detect
       - uses: buildpacks/github-actions/setup-tools@06e250da5bb4ccb9a2103719a21d2a7f2252fe83 # v5.11.0
       - uses: buildpacks/github-actions/setup-pack@06e250da5bb4ccb9a2103719a21d2a7f2252fe83 # v5.11.0
       - id: extract-version
@@ -56,14 +53,16 @@ jobs:
           PACKAGE="${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_REPO }}/${BP_ID}"
           echo "package=${PACKAGE}" >> $GITHUB_OUTPUT
           echo "Publishing: ${PACKAGE}" >> $GITHUB_STEP_SUMMARY
-      - run: |
-          sed -i.bak -E "s/__replace__/${STEPS_EXTRACT_VERSION_OUTPUTS_VERSION}/" buildpack.toml
-          echo "Set version: ${STEPS_EXTRACT_VERSION_OUTPUTS_VERSION}" >> $GITHUB_STEP_SUMMARY
+      - run: make prep VERSION=${BP_VERSION}
         env:
-          STEPS_EXTRACT_VERSION_OUTPUTS_VERSION: ${{ steps.extract-version.outputs.version }}
+          BP_VERSION: ${{ steps.extract-version.outputs.version }}
       - run: |
           pack buildpack package \
-          --publish ${STEPS_EXTRACT_PACKAGE_OUTPUTS_PACKAGE}:${STEPS_EXTRACT_VERSION_OUTPUTS_VERSION}
+            ${BP_PACKAGE}:${BP_VERSION} \
+            --publish \
+            --target linux/amd64 \
+            --config package.toml
+        working-directory: build
         env:
-          STEPS_EXTRACT_PACKAGE_OUTPUTS_PACKAGE: ${{ steps.extract-package.outputs.package }}
-          STEPS_EXTRACT_VERSION_OUTPUTS_VERSION: ${{ steps.extract-version.outputs.version }}
+          BP_PACKAGE: ${{ steps.extract-package.outputs.package }}
+          BP_VERSION: ${{ steps.extract-version.outputs.version }}
