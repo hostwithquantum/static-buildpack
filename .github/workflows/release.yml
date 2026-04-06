@@ -6,28 +6,31 @@ on:
     tags:
       - 'v*'
 
-permissions:
-  contents: write
+permissions: {}
 
 jobs:
   release:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     env:
       DOCKER_REGISTRY: "r.planetary-quantum.com"
       DOCKER_REPO: "buildpacks"
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
         with:
           fetch-depth: 0
-      - uses: actions/setup-go@v6
+          persist-credentials: true
+      - uses: actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c # v6
         with:
           go-version-file: go.mod
-      - uses: docker/login-action@v4
+          cache: false
+      - uses: docker/login-action@4907a6ddec9925e35a0a9e82d7399ccc52663121 # v4
         with:
           registry: ${{ env.DOCKER_REGISTRY }}
           username: ${{ secrets.BP_QUANTUM_DOCKER_USERNAME }}
           password: ${{ secrets.BP_QUANTUM_DOCKER_PASSWORD }}
-      - uses: goreleaser/goreleaser-action@v7
+      - uses: goreleaser/goreleaser-action@ec59f474b9834571250b370d4735c50f8e2d1e29 # v7
         with:
           version: '~> v2'
           args: release --clean
@@ -36,8 +39,8 @@ jobs:
       - run: |
           cp dist/build_linux_amd64_v1/build ./bin/build
           cp dist/detect_linux_amd64_v1/detect ./bin/detect
-      - uses: buildpacks/github-actions/setup-tools@v5.11.0
-      - uses: buildpacks/github-actions/setup-pack@v5.11.0
+      - uses: buildpacks/github-actions/setup-tools@06e250da5bb4ccb9a2103719a21d2a7f2252fe83 # v5.11.0
+      - uses: buildpacks/github-actions/setup-pack@06e250da5bb4ccb9a2103719a21d2a7f2252fe83 # v5.11.0
       - id: extract-version
         shell: bash
         run: |
@@ -51,8 +54,13 @@ jobs:
           echo "package=${PACKAGE}" >> $GITHUB_OUTPUT
           echo "Publishing: ${PACKAGE}" >> $GITHUB_STEP_SUMMARY
       - run: |
-          sed -i.bak -E "s/__replace__/${{ steps.extract-version.outputs.version }}/" buildpack.toml
-          echo "Set version: ${{ steps.extract-version.outputs.version }}" >> $GITHUB_STEP_SUMMARY
+          sed -i.bak -E "s/__replace__/${STEPS_EXTRACT_VERSION_OUTPUTS_VERSION}/" buildpack.toml
+          echo "Set version: ${STEPS_EXTRACT_VERSION_OUTPUTS_VERSION}" >> $GITHUB_STEP_SUMMARY
+        env:
+          STEPS_EXTRACT_VERSION_OUTPUTS_VERSION: ${{ steps.extract-version.outputs.version }}
       - run: |
           pack buildpack package \
-          --publish ${{ steps.extract-package.outputs.package }}:${{ steps.extract-version.outputs.version }}
+          --publish ${STEPS_EXTRACT_PACKAGE_OUTPUTS_PACKAGE}:${STEPS_EXTRACT_VERSION_OUTPUTS_VERSION}
+        env:
+          STEPS_EXTRACT_PACKAGE_OUTPUTS_PACKAGE: ${{ steps.extract-package.outputs.package }}
+          STEPS_EXTRACT_VERSION_OUTPUTS_VERSION: ${{ steps.extract-version.outputs.version }}

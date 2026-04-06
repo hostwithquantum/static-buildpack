@@ -3,7 +3,23 @@ name: pr
 on:
   pull_request:
 
+
+permissions:
+  contents: read
+
 jobs:
+  check_workflows:
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+      contents: read
+      actions: read
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+      - uses: zizmorcore/zizmor-action@71321a20a9ded102f6e9ce5718a2fcec2c4f70d8 # v0.5.2
+
   build:
     env:
       DOCKER_REGISTRY: "ttl.sh"
@@ -12,12 +28,15 @@ jobs:
       package: ${{ steps.setup.outputs.package }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
-      - uses: actions/setup-go@v6
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c # v6
         with:
           go-version-file: go.mod
-      - uses: buildpacks/github-actions/setup-tools@v5.11.0
-      - uses: buildpacks/github-actions/setup-pack@v5.11.0
+          cache: false
+      - uses: buildpacks/github-actions/setup-tools@06e250da5bb4ccb9a2103719a21d2a7f2252fe83 # v5.11.0
+      - uses: buildpacks/github-actions/setup-pack@06e250da5bb4ccb9a2103719a21d2a7f2252fe83 # v5.11.0
       - id: setup
         shell: bash
         run: |
@@ -25,7 +44,7 @@ jobs:
           PACKAGE="${{ env.DOCKER_REGISTRY }}/${DOCKER_REPO}:20m"
           echo "package=${PACKAGE}" >> $GITHUB_OUTPUT
           echo "Generated name: ${PACKAGE}" >> $GITHUB_STEP_SUMMARY
-      - uses: goreleaser/goreleaser-action@v7
+      - uses: goreleaser/goreleaser-action@ec59f474b9834571250b370d4735c50f8e2d1e29 # v7
         with:
           version: '~> v2'
           args: release --snapshot --clean
@@ -33,13 +52,17 @@ jobs:
       - run: make prep VERSION=dev BUILD_DIR=${{ env.BUILD_DIR }}
       - run: |
           pack buildpack package \
-            ${{ steps.setup.outputs.package }} \
+            ${STEPS_SETUP_OUTPUTS_PACKAGE} \
             --target linux/amd64 \
             --config package.toml
         working-directory: ${{ env.BUILD_DIR }}
+        env:
+          STEPS_SETUP_OUTPUTS_PACKAGE: ${{ steps.setup.outputs.package }}
       - name: publish temporary image
         run: |
-          docker push ${{ steps.setup.outputs.package }}
+          docker push ${STEPS_SETUP_OUTPUTS_PACKAGE}
+        env:
+          STEPS_SETUP_OUTPUTS_PACKAGE: ${{ steps.setup.outputs.package }}
 
   test:
     needs: build
@@ -50,13 +73,19 @@ jobs:
         test: [test-hugo, test-hugo-npm, test-mdbook, test-hugo-go]
         webserver: [nginx, httpd]
     steps:
-      - uses: actions/checkout@v6
-      - run: docker pull ${{ needs.build.outputs.package }}
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        with:
+          persist-credentials: false
+      - run: docker pull ${NEEDS_BUILD_OUTPUTS_PACKAGE}
+        env:
+          NEEDS_BUILD_OUTPUTS_PACKAGE: ${{ needs.build.outputs.package }}
       - name: Update meta-buildpack package.toml
         run: |
-          sed -i 's|docker://r.planetary-quantum.com/buildpacks/static-websites:latest|docker://${{ needs.build.outputs.package }}|' meta-buildpack/package.toml
-      - uses: buildpacks/github-actions/setup-tools@v5.11.0
-      - uses: buildpacks/github-actions/setup-pack@v5.11.0
+          sed -i "s|docker://r.planetary-quantum.com/buildpacks/static-websites:latest|docker://${NEEDS_BUILD_OUTPUTS_PACKAGE}|" meta-buildpack/package.toml
+        env:
+          NEEDS_BUILD_OUTPUTS_PACKAGE: ${{ needs.build.outputs.package }}
+      - uses: buildpacks/github-actions/setup-tools@06e250da5bb4ccb9a2103719a21d2a7f2252fe83 # v5.11.0
+      - uses: buildpacks/github-actions/setup-pack@06e250da5bb4ccb9a2103719a21d2a7f2252fe83 # v5.11.0
       - run: make setup
       - run: make ${{ matrix.test }}-${{ matrix.webserver }}
       - name: verify the correct webserver is installed

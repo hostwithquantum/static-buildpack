@@ -8,28 +8,35 @@ on:
 
 concurrency: buildpack_update
 
+permissions: {}
+
 jobs:
   update:
+    permissions:
+      contents: write
+      pull-requests: write
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        with:
+          persist-credentials: true
       - id: update
-        uses: paketo-buildpacks/github-config/actions/buildpack/update@main
+        uses: paketo-buildpacks/github-config/actions/buildpack/update@fde7603a84a3146cfab723bb3f0a2943219f7522 # main
         with:
           buildpack_toml_path: meta-buildpack/buildpack.toml
           package_toml_path: meta-buildpack/package.toml
           no_cnb_registry: true
       - id: commit
-        uses: paketo-buildpacks/github-config/actions/pull-request/create-commit@main
+        uses: paketo-buildpacks/github-config/actions/pull-request/create-commit@fde7603a84a3146cfab723bb3f0a2943219f7522 # main
         with:
           message: "chore(deps): update meta-buildpack"
           pathspec: "."
       - if: ${{ steps.commit.outputs.commit_sha != '' && steps.update.outputs.semver_bump != '<none>'}}
-        uses: paketo-buildpacks/github-config/actions/pull-request/push-branch@main
+        uses: paketo-buildpacks/github-config/actions/pull-request/push-branch@fde7603a84a3146cfab723bb3f0a2943219f7522 # main
         with:
           branch: automation/meta-buildpack/update
       - if: ${{ steps.commit.outputs.commit_sha != '' && steps.update.outputs.semver_bump != '<none>' }}
-        uses: paketo-buildpacks/github-config/actions/pull-request/open@main
+        uses: paketo-buildpacks/github-config/actions/pull-request/open@fde7603a84a3146cfab723bb3f0a2943219f7522 # main
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           title: "chore(deps): update meta-buildpack"
