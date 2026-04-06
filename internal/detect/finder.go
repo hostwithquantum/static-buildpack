@@ -2,6 +2,7 @@ package detect
 
 import (
 	"path/filepath"
+	"slices"
 
 	"github.com/paketo-buildpacks/packit/v2"
 	"github.com/paketo-buildpacks/packit/v2/fs"
@@ -51,17 +52,30 @@ func (f *finder) Find(workingDir string) error {
 	f.log.Process("Detecting static site configuration")
 	for _, metaFile := range f.Files {
 		f.log.Subprocess(metaFile)
-		path := filepath.Join(workingDir, metaFile)
-		if exist, err := fs.Exists(path); err != nil {
-			return err
-		} else if exist {
-			f.log.Detail("Found: %s", path)
-			f.matched = true
-			f.matches[metaFile] = path
-			return nil
+
+		// Build list of paths to check: root dir first, then config/_default/ for Hugo files
+		paths := []string{filepath.Join(workingDir, metaFile)}
+		if f.isHugoConfig(metaFile) {
+			paths = append(paths, filepath.Join(workingDir, "config", "_default", metaFile))
+		}
+
+		for _, path := range paths {
+			if exist, err := fs.Exists(path); err != nil {
+				return err
+			} else if exist {
+				f.log.Detail("Found: %s", path)
+				f.matched = true
+				f.matches[metaFile] = path
+				return nil
+			}
 		}
 	}
 	return packit.Fail.WithMessage("no static site configuration found in: %s", workingDir)
+}
+
+func (f *finder) isHugoConfig(filename string) bool {
+	hugoConfigs := []string{"hugo.yml", "hugo.yaml", "hugo.toml", "hugo.json"}
+	return slices.Contains(hugoConfigs, filename)
 }
 
 func (f *finder) GetStaticType() StaticType {
