@@ -16,13 +16,13 @@ func TestGetDefault(t *testing.T) {
 	t.Run("Test reading hugo version from buildpack.toml", func(t *testing.T) {
 		version := api.GetDefault(ctx.CNBPath, "BP_RUNWAY_STATIC_HUGO_VERSION")
 		assert.NotEmpty(t, version, "Expected to get hugo version from buildpack.toml, got empty string")
-		assert.Equal(t, "0.147.4", version, "Expected hugo version 0.147.4, got %s", version)
+		assert.Equal(t, "0.160.1", version, "Expected hugo version 0.160.1, got %s", version)
 	})
 
 	t.Run("Test reading mdbook version from buildpack.toml", func(t *testing.T) {
 		version := api.GetDefault(ctx.CNBPath, "BP_RUNWAY_STATIC_MDBOOK_VERSION")
 		assert.NotEmpty(t, version, "Expected to get mdbook version from buildpack.toml, got empty string")
-		assert.Equal(t, "0.4.49", version, "Expected mdbook version 0.4.49, got %s", version)
+		assert.Equal(t, "0.5.2", version, "Expected mdbook version 0.5.2, got %s", version)
 	})
 
 	t.Run("Test with non-existent tool", func(t *testing.T) {
