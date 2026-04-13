@@ -20,6 +20,26 @@ const (
 	MdBookType StaticType = "mdbook"
 )
 
+// resolveVersion determines which version to use, preferring:
+// 1) explicit env var set by the user
+// 2) cached version from a previous build
+// 3) Default from buildpack.toml
+func ResolveVersion(log scribe.Emitter, layer packit.Layer, cnbPath, envVar string) string {
+	// If the user explicitly set the env var, always use that
+	if version := os.Getenv(envVar); version != "" {
+		return version
+	}
+
+	// Check if we have a cached version from a previous build
+	if cached, ok := layer.Metadata["version"].(string); ok && cached != "" {
+		log.Process("Reusing previously installed version %s (set %s to override)", cached, envVar)
+		return cached
+	}
+
+	// Fall back to buildpack.toml default
+	return api.GetDefault(cnbPath, envVar)
+}
+
 func Build(log scribe.Emitter) packit.BuildFunc {
 	return func(ctx packit.BuildContext) (packit.BuildResult, error) {
 		log.Title("%s %s", ctx.BuildpackInfo.Name, ctx.BuildpackInfo.Version)
@@ -62,29 +82,51 @@ func Build(log scribe.Emitter) packit.BuildFunc {
 		var (
 			publicDir = "htdocs"
 			args      []string
+			version   string
 		)
 
 		switch staticType {
 		case HugoType:
-			version := api.GetDefault(ctx.CNBPath, api.HugoVersionEnv)
+			version = ResolveVersion(log, staticLayer, ctx.CNBPath, api.HugoVersionEnv)
 			if version == "" {
 				return packit.BuildResult{}, fmt.Errorf("no Hugo version specified and no default found in buildpack.toml")
 			}
-			if err := installHugo(log, staticLayer, version); err != nil {
-				return packit.BuildResult{}, fmt.Errorf("failed to install Hugo: %w", err)
-			}
 			args = append(args, []string{"--source", ".", "--destination", publicDir, "--minify"}...)
 		case MdBookType:
-			version := api.GetDefault(ctx.CNBPath, api.MdBookVersionEnv)
+			version = ResolveVersion(log, staticLayer, ctx.CNBPath, api.MdBookVersionEnv)
 			if version == "" {
 				return packit.BuildResult{}, fmt.Errorf("no MdBook version specified and no default found in buildpack.toml")
-			}
-			if err := installMdBook(log, staticLayer, version); err != nil {
-				return packit.BuildResult{}, fmt.Errorf("failed to install mdBook: %w", err)
 			}
 			args = append(args, []string{"build", ".", "--dest-dir", publicDir}...)
 		default:
 			return packit.BuildResult{}, fmt.Errorf("unsupported static type: %s", staticType)
+		}
+
+		// Check if cached layer already has the right version installed
+		cachedVersion, _ := staticLayer.Metadata["version"].(string)
+		if cachedVersion == version {
+			log.Process("Reusing cached %s %s", string(staticType), version)
+		} else {
+			// Version changed or first build — reset and reinstall
+			staticLayer, err = staticLayer.Reset()
+			if err != nil {
+				return packit.BuildResult{}, fmt.Errorf("failed to reset layer: %w", err)
+			}
+
+			switch staticType {
+			case HugoType:
+				if err := installHugo(log, staticLayer, version); err != nil {
+					return packit.BuildResult{}, fmt.Errorf("failed to install Hugo: %w", err)
+				}
+			case MdBookType:
+				if err := installMdBook(log, staticLayer, version); err != nil {
+					return packit.BuildResult{}, fmt.Errorf("failed to install mdBook: %w", err)
+				}
+			}
+
+			staticLayer.Metadata = map[string]any{
+				"version": version,
+			}
 		}
 
 		// Set up the build process
