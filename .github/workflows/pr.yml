@@ -1,3 +1,4 @@
+---
 name: pr
 
 on:
@@ -38,8 +39,8 @@ jobs:
         with:
           go-version-file: go.mod
           cache: false
-      - uses: buildpacks/github-actions/setup-tools@06e250da5bb4ccb9a2103719a21d2a7f2252fe83 # v5.11.0
-      - uses: buildpacks/github-actions/setup-pack@06e250da5bb4ccb9a2103719a21d2a7f2252fe83 # v5.11.0
+      - uses: buildpacks/github-actions/setup-tools@b4faaabcd9dbc5fa332451ae33bce8b583f3ec1b # v5.12.0
+      - uses: buildpacks/github-actions/setup-pack@b4faaabcd9dbc5fa332451ae33bce8b583f3ec1b # v5.12.0
       - id: setup
         shell: bash
         run: |
@@ -58,42 +59,69 @@ jobs:
             BUILD_DIR=${{ env.BUILD_DIR }}
       - run: |
           pack buildpack package \
-            ${STEPS_SETUP_OUTPUTS_PACKAGE} \
+            --publish \
+            ${PACKAGE} \
             --target linux/amd64 \
+            --target linux/arm64 \
             --config package.toml
         working-directory: ${{ env.BUILD_DIR }}
         env:
-          STEPS_SETUP_OUTPUTS_PACKAGE: ${{ steps.setup.outputs.package }}
-      - name: publish temporary image
-        run: |
-          docker push ${STEPS_SETUP_OUTPUTS_PACKAGE}
-        env:
-          STEPS_SETUP_OUTPUTS_PACKAGE: ${{ steps.setup.outputs.package }}
+          PACKAGE: ${{ steps.setup.outputs.package }}
 
   test:
     needs: build
-    runs-on: ubuntu-latest
-    name: ${{ matrix.test }}-${{ matrix.webserver }}
+    runs-on: ${{ matrix.runner }}
+    name: ${{ matrix.test }}-${{ matrix.webserver }}-${{ matrix.runner }}
     strategy:
       matrix:
-        test: [test-hugo, test-hugo-npm, test-mdbook, test-hugo-go]
-        webserver: [nginx, httpd]
+        include:
+          # jammy-base (amd64 only) — regression safety net
+          - { test: test-hugo, webserver: nginx, builder: "paketobuildpacks/builder-jammy-base:latest", runner: ubuntu-latest }
+          - { test: test-hugo, webserver: httpd, builder: "paketobuildpacks/builder-jammy-base:latest", runner: ubuntu-latest }
+          - { test: test-hugo-npm, webserver: nginx, builder: "paketobuildpacks/builder-jammy-base:latest", runner: ubuntu-latest }
+          - { test: test-hugo-npm, webserver: httpd, builder: "paketobuildpacks/builder-jammy-base:latest", runner: ubuntu-latest }
+          - { test: test-hugo-go, webserver: nginx, builder: "paketobuildpacks/builder-jammy-base:latest", runner: ubuntu-latest }
+          - { test: test-hugo-go, webserver: httpd, builder: "paketobuildpacks/builder-jammy-base:latest", runner: ubuntu-latest }
+          - { test: test-mdbook, webserver: nginx, builder: "paketobuildpacks/builder-jammy-base:latest", runner: ubuntu-latest }
+          - { test: test-mdbook, webserver: httpd, builder: "paketobuildpacks/builder-jammy-base:latest", runner: ubuntu-latest }
+          # ubuntu-noble (amd64)
+          - { test: test-hugo, webserver: nginx, builder: "paketobuildpacks/ubuntu-noble-builder:latest", runner: ubuntu-latest }
+          - { test: test-hugo, webserver: httpd, builder: "paketobuildpacks/ubuntu-noble-builder:latest", runner: ubuntu-latest }
+          - { test: test-hugo-npm, webserver: nginx, builder: "paketobuildpacks/ubuntu-noble-builder:latest", runner: ubuntu-latest }
+          - { test: test-hugo-npm, webserver: httpd, builder: "paketobuildpacks/ubuntu-noble-builder:latest", runner: ubuntu-latest }
+          - { test: test-hugo-go, webserver: nginx, builder: "paketobuildpacks/ubuntu-noble-builder:latest", runner: ubuntu-latest }
+          - { test: test-hugo-go, webserver: httpd, builder: "paketobuildpacks/ubuntu-noble-builder:latest", runner: ubuntu-latest }
+          - { test: test-mdbook, webserver: nginx, builder: "paketobuildpacks/ubuntu-noble-builder:latest", runner: ubuntu-latest }
+          - { test: test-mdbook, webserver: httpd, builder: "paketobuildpacks/ubuntu-noble-builder:latest", runner: ubuntu-latest }
+          # ubuntu-noble (arm64)
+          - { test: test-hugo, webserver: nginx, builder: "paketobuildpacks/ubuntu-noble-builder:latest", runner: ubuntu-24.04-arm }
+          - { test: test-hugo, webserver: httpd, builder: "paketobuildpacks/ubuntu-noble-builder:latest", runner: ubuntu-24.04-arm }
+          - { test: test-hugo-npm, webserver: nginx, builder: "paketobuildpacks/ubuntu-noble-builder:latest", runner: ubuntu-24.04-arm }
+          - { test: test-hugo-npm, webserver: httpd, builder: "paketobuildpacks/ubuntu-noble-builder:latest", runner: ubuntu-24.04-arm }
+          - { test: test-hugo-go, webserver: nginx, builder: "paketobuildpacks/ubuntu-noble-builder:latest", runner: ubuntu-24.04-arm }
+          - { test: test-hugo-go, webserver: httpd, builder: "paketobuildpacks/ubuntu-noble-builder:latest", runner: ubuntu-24.04-arm }
+          - { test: test-mdbook, webserver: nginx, builder: "paketobuildpacks/ubuntu-noble-builder:latest", runner: ubuntu-24.04-arm }
+          - { test: test-mdbook, webserver: httpd, builder: "paketobuildpacks/ubuntu-noble-builder:latest", runner: ubuntu-24.04-arm }
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
         with:
           persist-credentials: false
-      - run: docker pull ${NEEDS_BUILD_OUTPUTS_PACKAGE}
+      - run: docker pull ${PACKAGE}
         env:
-          NEEDS_BUILD_OUTPUTS_PACKAGE: ${{ needs.build.outputs.package }}
+          PACKAGE: ${{ needs.build.outputs.package }}
       - name: Update meta-buildpack package.toml
         uses: ./.github/actions/update-static
         with:
           image: "docker://${{ needs.build.outputs.package }}"
           version: ${{ env.BP_VERSION }}
-      - uses: buildpacks/github-actions/setup-tools@06e250da5bb4ccb9a2103719a21d2a7f2252fe83 # v5.11.0
-      - uses: buildpacks/github-actions/setup-pack@06e250da5bb4ccb9a2103719a21d2a7f2252fe83 # v5.11.0
-      - run: make setup
-      - run: make ${{ matrix.test }}-${{ matrix.webserver }}
+      - uses: buildpacks/github-actions/setup-tools@b4faaabcd9dbc5fa332451ae33bce8b583f3ec1b # v5.12.0
+      - uses: buildpacks/github-actions/setup-pack@b4faaabcd9dbc5fa332451ae33bce8b583f3ec1b # v5.12.0
+      - run: |
+          make setup \
+            builder=${{ matrix.builder }}
+      - run: |
+          make ${{ matrix.test }}-${{ matrix.webserver }} \
+            builder=${{ matrix.builder }}
       - name: verify the correct webserver is installed
         run: |
           docker run --rm \

@@ -9,9 +9,7 @@ BUILD_DIR?=./build
 VERSION?=dev
 
 build:
-	GOOS=linux GOARCH=amd64 goreleaser build --single-target --clean --snapshot
-	cp dist/build_linux_amd64_v1/build ./bin/build
-	cp dist/detect_linux_amd64_v1/detect ./bin/detect
+	goreleaser build --single-target --clean --snapshot
 
 clean: restore-version
 	rm -rf dist/
@@ -82,9 +80,12 @@ test: package test-hugo-nginx test-hugo-httpd test-hugo-npm-nginx test-hugo-npm-
 
 .PHONY: prep
 prep:
-	mkdir -p $(BUILD_DIR)/bin
-	cp dist/build_linux_amd64*/build $(BUILD_DIR)/bin/
-	cp dist/detect_linux_amd64*/detect $(BUILD_DIR)/bin/
+	mkdir -p $(BUILD_DIR)/linux/amd64/bin
+	mkdir -p $(BUILD_DIR)/linux/arm64/bin
+	cp dist/*_linux_amd64*/build $(BUILD_DIR)/linux/amd64/bin/
+	cp dist/*_linux_amd64*/detect $(BUILD_DIR)/linux/amd64/bin/
+	cp dist/*_linux_arm64*/build $(BUILD_DIR)/linux/arm64/bin/
+	cp dist/*_linux_arm64*/detect $(BUILD_DIR)/linux/arm64/bin/
 	cp buildpack.toml $(BUILD_DIR)/
 	sed -i.bak -E "s/__replace__/$(VERSION)/" $(BUILD_DIR)/buildpack.toml
 	rm -f $(BUILD_DIR)/buildpack.toml.bak

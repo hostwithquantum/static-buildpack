@@ -25,3 +25,11 @@
 
 [[dependencies]]
   uri = "docker://docker.io/paketobuildpacks/nginx:1.0.20"
+
+[[targets]]
+os = "linux"
+arch = "amd64"
+
+[[targets]]
+os = "linux"
+arch = "arm64"

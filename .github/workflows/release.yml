@@ -42,8 +42,8 @@ jobs:
           args: release --clean
         env:
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
-      - uses: buildpacks/github-actions/setup-tools@06e250da5bb4ccb9a2103719a21d2a7f2252fe83 # v5.11.0
-      - uses: buildpacks/github-actions/setup-pack@06e250da5bb4ccb9a2103719a21d2a7f2252fe83 # v5.11.0
+      - uses: buildpacks/github-actions/setup-tools@b4faaabcd9dbc5fa332451ae33bce8b583f3ec1b # v5.12.0
+      - uses: buildpacks/github-actions/setup-pack@b4faaabcd9dbc5fa332451ae33bce8b583f3ec1b # v5.12.0
       - id: extract-version
         run: echo "version=$(jq -r '.version' dist/metadata.json)" >> $GITHUB_OUTPUT
       - id: extract-package
@@ -61,6 +61,7 @@ jobs:
             ${BP_PACKAGE}:${BP_VERSION} \
             --publish \
             --target linux/amd64 \
+            --target linux/arm64 \
             --config package.toml
         working-directory: build
         env:
