@@ -6,6 +6,7 @@ import (
 	"html/template"
 	"net/http"
 	"os"
+	"runtime"
 
 	"github.com/paketo-buildpacks/packit/v2/scribe"
 	"github.com/paketo-buildpacks/packit/v2/vacation"
@@ -47,18 +48,30 @@ func downloadAndInstall(log scribe.Emitter, url, destPath string) error {
 }
 
 func getHugoURL(version string) string {
+	arch := "amd64"
+	if runtime.GOARCH == "arm64" {
+		arch = "arm64"
+	}
+
 	return tprintf(HugoBaseURL, map[string]any{
 		"Version": version,
 		"OS":      "linux",
-		"Arch":    "amd64",
+		"Arch":    arch,
 	})
 }
 
 func getMdBookURL(version string) string {
+	arch := "x86_64"
+	os := "unknown-linux-gnu"
+	if runtime.GOARCH == "arm64" {
+		arch = "aarch64"
+		os = "unknown-linux-musl"
+	}
+
 	return tprintf(MdBookBaseURL, map[string]any{
 		"Version": version,
-		"Arch":    "x86_64",
-		"OS":      "unknown-linux-gnu",
+		"Arch":    arch,
+		"OS":      os,
 	})
 }
 

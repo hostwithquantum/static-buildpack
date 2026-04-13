@@ -13,8 +13,8 @@ api = "0.7"
     uri = "https://github.com/hostwithquantum/static-buildpack/blob/main/LICENSE"
 
 [metadata]
-  include-files = ["bin/build", "bin/detect", "buildpack.toml"]
-  pre-package = "make package"
+  include-files = ["linux/amd64/bin/build", "linux/amd64/bin/detect", "linux/arm64/bin/build", "linux/arm64/bin/detect", "buildpack.toml"]
+  pre-package = "make build"
 
   [[metadata.configurations]]
     default = ""
@@ -30,3 +30,11 @@ api = "0.7"
     default = "0.4.49"
     description = "MdBook version to install"
     name = "BP_RUNWAY_STATIC_MDBOOK_VERSION"
+
+[[targets]]
+  arch = "amd64"
+  os = "linux"
+
+[[targets]]
+  arch = "arm64"
+  os = "linux"
