@@ -22,12 +22,12 @@ api = "0.7"
     name = "BP_RUNWAY_STATIC_PATH"
 
   [[metadata.configurations]]
-    default = "0.147.4"
+    default = "0.160.1"
     description = "Hugo version to install"
     name = "BP_RUNWAY_STATIC_HUGO_VERSION"
 
   [[metadata.configurations]]
-    default = "0.4.49"
+    default = "0.5.2"
     description = "MdBook version to install"
     name = "BP_RUNWAY_STATIC_MDBOOK_VERSION"
 
