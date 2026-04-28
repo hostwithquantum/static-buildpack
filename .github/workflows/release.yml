@@ -15,7 +15,7 @@ jobs:
       DOCKER_REGISTRY: "r.planetary-quantum.com"
       DOCKER_REPO: "buildpacks"
     steps:
-      - uses: actions/create-github-app-token@f8d387b68d61c58ab83c6c016672934102569859 # v3
+      - uses: actions/create-github-app-token@1b10c78c7865c340bc4f6099eb2f838309f1e8c3 # v3
         id: app-token
         with:
           app-id: ${{ secrets.RUNWAY_CI_BOT_APP_ID }}
@@ -36,7 +36,7 @@ jobs:
           registry: ${{ env.DOCKER_REGISTRY }}
           username: ${{ secrets.BP_QUANTUM_DOCKER_USERNAME }}
           password: ${{ secrets.BP_QUANTUM_DOCKER_PASSWORD }}
-      - uses: goreleaser/goreleaser-action@ec59f474b9834571250b370d4735c50f8e2d1e29 # v7
+      - uses: goreleaser/goreleaser-action@e24998b8b67b290c2fa8b7c14fcfa7de2c5c9b8c # v7
         with:
           version: '~> v2'
           args: release --clean
