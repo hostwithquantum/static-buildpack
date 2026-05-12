@@ -22,7 +22,7 @@ jobs:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           persist-credentials: false
-      - uses: zizmorcore/zizmor-action@71321a20a9ded102f6e9ce5718a2fcec2c4f70d8 # v0.5.2
+      - uses: zizmorcore/zizmor-action@b1d7e1fb5de872772f31590499237e7cce841e8e # v0.5.3
 
   build:
     env:
@@ -39,8 +39,8 @@ jobs:
         with:
           go-version-file: go.mod
           cache: false
-      - uses: buildpacks/github-actions/setup-tools@b4faaabcd9dbc5fa332451ae33bce8b583f3ec1b # v5.12.0
-      - uses: buildpacks/github-actions/setup-pack@b4faaabcd9dbc5fa332451ae33bce8b583f3ec1b # v5.12.0
+      - uses: buildpacks/github-actions/setup-tools@3fc05449a74f1a007f75e87d46afea4fb471127f # v5.12.1
+      - uses: buildpacks/github-actions/setup-pack@3fc05449a74f1a007f75e87d46afea4fb471127f # v5.12.1
       - id: setup
         shell: bash
         run: |
@@ -48,7 +48,7 @@ jobs:
           PACKAGE="${{ env.DOCKER_REGISTRY }}/${DOCKER_REPO}:20m"
           echo "package=${PACKAGE}" >> $GITHUB_OUTPUT
           echo "Generated name: ${PACKAGE}" >> $GITHUB_STEP_SUMMARY
-      - uses: goreleaser/goreleaser-action@ec59f474b9834571250b370d4735c50f8e2d1e29 # v7
+      - uses: goreleaser/goreleaser-action@1a80836c5c9d9e5755a25cb59ec6f45a3b5f41a8 # v7
         with:
           version: '~> v2'
           args: release --snapshot --clean
@@ -114,8 +114,8 @@ jobs:
         with:
           image: "docker://${{ needs.build.outputs.package }}"
           version: ${{ env.BP_VERSION }}
-      - uses: buildpacks/github-actions/setup-tools@b4faaabcd9dbc5fa332451ae33bce8b583f3ec1b # v5.12.0
-      - uses: buildpacks/github-actions/setup-pack@b4faaabcd9dbc5fa332451ae33bce8b583f3ec1b # v5.12.0
+      - uses: buildpacks/github-actions/setup-tools@3fc05449a74f1a007f75e87d46afea4fb471127f # v5.12.1
+      - uses: buildpacks/github-actions/setup-pack@3fc05449a74f1a007f75e87d46afea4fb471127f # v5.12.1
       - run: |
           make setup \
             builder=${{ matrix.builder }}
