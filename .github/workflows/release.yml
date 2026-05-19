@@ -21,8 +21,8 @@ jobs:
           export-env: false
         env:
           OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_RUNWAYOSS_SERVICE_ACCOUNT }}
-          REGISTRY_USERNAME: op://Runway/robot-harbor-buildpacks/username
-          REGISTRY_PASSWORD: op://Runway/robot-harbor-buildpacks/password
+          REGISTRY_USERNAME: op://RunwayOSS/robot-harbor-buildpacks/username
+          REGISTRY_PASSWORD: op://RunwayOSS/robot-harbor-buildpacks/password
       - uses: actions/create-github-app-token@1b10c78c7865c340bc4f6099eb2f838309f1e8c3 # v3.1.1
         id: app-token
         with:
