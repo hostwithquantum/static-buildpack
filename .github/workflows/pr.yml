@@ -22,7 +22,7 @@ jobs:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           persist-credentials: false
-      - uses: zizmorcore/zizmor-action@b1d7e1fb5de872772f31590499237e7cce841e8e # v0.5.3
+      - uses: zizmorcore/zizmor-action@5f14fd08f7cf1cb1609c1e344975f152c7ee938d # v0.5.6
 
   build:
     env:
@@ -39,8 +39,8 @@ jobs:
         with:
           go-version-file: go.mod
           cache: false
-      - uses: buildpacks/github-actions/setup-tools@3fc05449a74f1a007f75e87d46afea4fb471127f # v5.12.1
-      - uses: buildpacks/github-actions/setup-pack@3fc05449a74f1a007f75e87d46afea4fb471127f # v5.12.1
+      - uses: buildpacks/github-actions/setup-tools@812ff667850b930be2217c48e1f980e71bd3e14f # v5.12.3
+      - uses: buildpacks/github-actions/setup-pack@812ff667850b930be2217c48e1f980e71bd3e14f # v5.12.3
       - id: setup
         shell: bash
         run: |
@@ -48,7 +48,7 @@ jobs:
           PACKAGE="${{ env.DOCKER_REGISTRY }}/${DOCKER_REPO}:20m"
           echo "package=${PACKAGE}" >> $GITHUB_OUTPUT
           echo "Generated name: ${PACKAGE}" >> $GITHUB_STEP_SUMMARY
-      - uses: goreleaser/goreleaser-action@1a80836c5c9d9e5755a25cb59ec6f45a3b5f41a8 # v7.2.1
+      - uses: goreleaser/goreleaser-action@5daf1e915a5f0af01ddbcd89a43b8061ff4f1a89 # v7.2.2
         with:
           version: '~> v2'
           args: release --snapshot --clean
@@ -114,8 +114,8 @@ jobs:
         with:
           image: "docker://${{ needs.build.outputs.package }}"
           version: ${{ env.BP_VERSION }}
-      - uses: buildpacks/github-actions/setup-tools@3fc05449a74f1a007f75e87d46afea4fb471127f # v5.12.1
-      - uses: buildpacks/github-actions/setup-pack@3fc05449a74f1a007f75e87d46afea4fb471127f # v5.12.1
+      - uses: buildpacks/github-actions/setup-tools@812ff667850b930be2217c48e1f980e71bd3e14f # v5.12.3
+      - uses: buildpacks/github-actions/setup-pack@812ff667850b930be2217c48e1f980e71bd3e14f # v5.12.3
       - run: |
           make setup \
             builder=${{ matrix.builder }}
