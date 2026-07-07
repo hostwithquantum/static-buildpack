@@ -44,14 +44,14 @@ jobs:
           registry: ${{ env.DOCKER_REGISTRY }}
           username: ${{ steps.load-registry-credentials.outputs.REGISTRY_USERNAME }}
           password: ${{ steps.load-registry-credentials.outputs.REGISTRY_PASSWORD }}
-      - uses: goreleaser/goreleaser-action@5daf1e915a5f0af01ddbcd89a43b8061ff4f1a89 # v7.2.2
+      - uses: goreleaser/goreleaser-action@f06c13b6b1a9625abc9e6e439d9c05a8f2190e94 # v7.2.3
         with:
           version: '~> v2'
           args: release --clean
         env:
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
-      - uses: buildpacks/github-actions/setup-tools@8fe5c9d7f5a3fa22d4b7cc7d50ba8ebd7eddf414 # v5.12.4
-      - uses: buildpacks/github-actions/setup-pack@8fe5c9d7f5a3fa22d4b7cc7d50ba8ebd7eddf414 # v5.12.4
+      - uses: buildpacks/github-actions/setup-tools@e3b14c6e906f91da358e01dc2849ce068188107f # v5.12.5
+      - uses: buildpacks/github-actions/setup-pack@e3b14c6e906f91da358e01dc2849ce068188107f # v5.12.5
       - id: extract-version
         run: echo "version=$(jq -r '.version' dist/metadata.json)" >> $GITHUB_OUTPUT
       - id: extract-package

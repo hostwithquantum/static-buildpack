@@ -39,8 +39,8 @@ jobs:
         with:
           go-version-file: go.mod
           cache: false
-      - uses: buildpacks/github-actions/setup-tools@8fe5c9d7f5a3fa22d4b7cc7d50ba8ebd7eddf414 # v5.12.4
-      - uses: buildpacks/github-actions/setup-pack@8fe5c9d7f5a3fa22d4b7cc7d50ba8ebd7eddf414 # v5.12.4
+      - uses: buildpacks/github-actions/setup-tools@e3b14c6e906f91da358e01dc2849ce068188107f # v5.12.5
+      - uses: buildpacks/github-actions/setup-pack@e3b14c6e906f91da358e01dc2849ce068188107f # v5.12.5
       - id: setup
         shell: bash
         run: |
@@ -48,7 +48,7 @@ jobs:
           PACKAGE="${{ env.DOCKER_REGISTRY }}/${DOCKER_REPO}:20m"
           echo "package=${PACKAGE}" >> $GITHUB_OUTPUT
           echo "Generated name: ${PACKAGE}" >> $GITHUB_STEP_SUMMARY
-      - uses: goreleaser/goreleaser-action@5daf1e915a5f0af01ddbcd89a43b8061ff4f1a89 # v7.2.2
+      - uses: goreleaser/goreleaser-action@f06c13b6b1a9625abc9e6e439d9c05a8f2190e94 # v7.2.3
         with:
           version: '~> v2'
           args: release --snapshot --clean
@@ -114,8 +114,8 @@ jobs:
         with:
           image: "docker://${{ needs.build.outputs.package }}"
           version: ${{ env.BP_VERSION }}
-      - uses: buildpacks/github-actions/setup-tools@8fe5c9d7f5a3fa22d4b7cc7d50ba8ebd7eddf414 # v5.12.4
-      - uses: buildpacks/github-actions/setup-pack@8fe5c9d7f5a3fa22d4b7cc7d50ba8ebd7eddf414 # v5.12.4
+      - uses: buildpacks/github-actions/setup-tools@e3b14c6e906f91da358e01dc2849ce068188107f # v5.12.5
+      - uses: buildpacks/github-actions/setup-pack@e3b14c6e906f91da358e01dc2849ce068188107f # v5.12.5
       - run: |
           make setup \
             builder=${{ matrix.builder }}
